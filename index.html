@@ -58,12 +58,59 @@
     font-weight: 300;
   }
 
+  /* --- Nav Tabs --- */
+  .main-nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 1rem 1.5rem 0;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .main-nav-btn {
+    padding: 0.7rem 1.5rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .main-nav-btn:hover { color: var(--cream); background: var(--bg-card-hover); }
+  .main-nav-btn.active {
+    background: var(--bg-deep);
+    color: var(--amber);
+    font-weight: 600;
+    border-color: var(--amber-dim);
+  }
+  .main-nav-btn .badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--error);
+    color: #fff;
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 10px;
+    font-weight: 700;
+    min-width: 18px;
+    text-align: center;
+  }
+
   /* --- Layout --- */
   .container {
     max-width: 960px;
     margin: 0 auto;
     padding: 2rem 1.5rem 4rem;
   }
+
+  .page { display: none; }
+  .page.active { display: block; }
 
   /* --- Sections --- */
   .section {
@@ -350,6 +397,7 @@
     gap: 0.5rem;
     margin-top: 1.5rem;
     justify-content: center;
+    flex-wrap: wrap;
   }
   .export-btn {
     background: var(--bg-card);
@@ -713,6 +761,200 @@
   }
   .quiz-action-btn.secondary:hover { border-color: var(--amber); color: var(--amber); }
 
+  /* --- Dashboard --- */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--amber);
+  }
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+  }
+  .stat-card.urgent .stat-value { color: var(--error); }
+  .stat-card.success .stat-value { color: var(--success); }
+
+  /* --- Deck List --- */
+  .deck-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .deck-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .deck-item:hover {
+    border-color: var(--amber-dim);
+    background: var(--bg-card-hover);
+  }
+  .deck-info { flex: 1; }
+  .deck-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--cream);
+  }
+  .deck-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    display: flex;
+    gap: 1rem;
+  }
+  .deck-due {
+    color: var(--amber);
+    font-weight: 600;
+  }
+  .deck-actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .deck-action-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .deck-action-btn:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+  .deck-action-btn.danger:hover {
+    border-color: var(--error);
+    color: var(--error);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+  }
+  .empty-state p { font-size: 1rem; margin-bottom: 0.5rem; }
+  .empty-state small { font-size: 0.85rem; }
+
+  /* --- SRS Review Buttons --- */
+  .srs-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  .srs-btn {
+    flex: 1;
+    padding: 0.75rem 0.5rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 2px solid;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    text-align: center;
+  }
+  .srs-btn .srs-interval {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 400;
+    opacity: 0.7;
+    margin-top: 0.15rem;
+  }
+  .srs-btn.again { border-color: var(--error); color: var(--error); }
+  .srs-btn.again:hover { background: var(--error); color: var(--bg-deep); }
+  .srs-btn.hard { border-color: var(--amber-dim); color: var(--amber-dim); }
+  .srs-btn.hard:hover { background: var(--amber-dim); color: var(--bg-deep); }
+  .srs-btn.good { border-color: var(--success); color: var(--success); }
+  .srs-btn.good:hover { background: var(--success); color: var(--bg-deep); }
+  .srs-btn.easy { border-color: #7ec8e3; color: #7ec8e3; }
+  .srs-btn.easy:hover { background: #7ec8e3; color: var(--bg-deep); }
+
+  /* --- Modal --- */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--cream);
+    margin-bottom: 1rem;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+  }
+
+  /* --- Share --- */
+  .share-url-box {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    word-break: break-all;
+    max-height: 120px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+  }
+  .qr-container {
+    text-align: center;
+    margin: 1rem 0;
+  }
+  .qr-container canvas {
+    border-radius: 8px;
+    background: #fff;
+    padding: 12px;
+  }
+
   /* --- Hidden --- */
   .hidden { display: none !important; }
 
@@ -724,6 +966,11 @@
     .card-viewport { height: 260px; }
     .card-text { font-size: 1rem; }
     .card-front .card-text { font-size: 1.1rem; }
+    .main-nav { flex-wrap: wrap; }
+    .main-nav-btn { font-size: 0.8rem; padding: 0.6rem 1rem; }
+    .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+    .srs-buttons { flex-wrap: wrap; }
+    .srs-btn { min-width: calc(50% - 0.25rem); }
   }
 </style>
 </head>
@@ -734,224 +981,347 @@
   <p>Paste any text and let AI create study flashcards for you</p>
 </header>
 
+<!-- Main Navigation -->
+<nav class="main-nav">
+  <button class="main-nav-btn active" onclick="showPage('generate')">Create</button>
+  <button class="main-nav-btn" onclick="showPage('dashboard')" id="navDashboard">Dashboard</button>
+  <button class="main-nav-btn" onclick="showPage('decks')" id="navDecks">My Decks</button>
+  <button class="main-nav-btn" onclick="showPage('review')" id="navReview">
+    Review
+    <span class="badge hidden" id="dueBadge">0</span>
+  </button>
+</nav>
+
 <div class="container">
-  <!-- Input Section -->
-  <div class="section">
-    <div class="section-title"><span class="icon">&#9998;</span> Source Material</div>
-    <textarea id="sourceText" placeholder="Paste your study material here — lecture notes, textbook passages, articles, or any text you want to learn from..."></textarea>
-    <div class="row">
-      <div>
-        <label for="numCards">Number of Cards</label>
-        <select id="numCards">
-          <option value="5">5 cards</option>
-          <option value="8">8 cards</option>
-          <option value="10" selected>10 cards</option>
-          <option value="15">15 cards</option>
-          <option value="20">20 cards</option>
-        </select>
+
+  <!-- ==================== PAGE: GENERATE ==================== -->
+  <div class="page active" id="page-generate">
+    <!-- Input Section -->
+    <div class="section">
+      <div class="section-title"><span class="icon">&#9998;</span> Source Material</div>
+      <textarea id="sourceText" placeholder="Paste your study material here — lecture notes, textbook passages, articles, or any text you want to learn from..."></textarea>
+      <div class="row">
+        <div>
+          <label for="numCards">Number of Cards</label>
+          <select id="numCards">
+            <option value="5">5 cards</option>
+            <option value="8">8 cards</option>
+            <option value="10" selected>10 cards</option>
+            <option value="15">15 cards</option>
+            <option value="20">20 cards</option>
+          </select>
+        </div>
+        <div>
+          <label for="difficulty">Difficulty</label>
+          <select id="difficulty">
+            <option value="easy">Easy — Definitions & Facts</option>
+            <option value="medium" selected>Medium — Concepts & Relationships</option>
+            <option value="hard">Hard — Application & Analysis</option>
+            <option value="mixed">Mixed</option>
+          </select>
+        </div>
       </div>
-      <div>
-        <label for="difficulty">Difficulty</label>
-        <select id="difficulty">
-          <option value="easy">Easy — Definitions & Facts</option>
-          <option value="medium" selected>Medium — Concepts & Relationships</option>
-          <option value="hard">Hard — Application & Analysis</option>
-          <option value="mixed">Mixed</option>
-        </select>
+    </div>
+
+    <!-- AI Configuration Section -->
+    <div class="section" id="aiSection">
+      <div class="section-title"><span class="icon">&#128273;</span> AI Enhancement <span style="font-size:0.75rem; font-family:'Source Serif 4',serif; font-weight:400; color:var(--text-muted); margin-left:0.5rem;" id="aiSectionBadge">(Optional)</span></div>
+      <div id="workerModeUI" style="display:none">
+        <p style="font-size:1rem; color:var(--success); font-weight:600; letter-spacing:0.01em;">&#10024; Create your flashcards with AI — instantly, for free.</p>
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.5rem;">Paste any text, notes, or topic and let AI turn it into smart study cards. No account or API key needed.</p>
+      </div>
+      <div id="apiKeyModeUI">
+        <p style="font-size:0.9rem; color:var(--success); margin-bottom:0.75rem; font-weight:500;">
+          &#10003; This app is free to use! Flashcards are generated locally from your text.
+        </p>
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.75rem;">
+          Want even better results? Add a Claude API key for AI-powered generation and smart quiz grading.
+        </p>
+        <div>
+          <label for="apiKey">Anthropic API Key (optional)</label>
+          <input type="password" id="apiKey" placeholder="sk-ant-api03-... (leave blank for free mode)">
+        </div>
+        <details style="margin-top:0.75rem; font-size:0.85rem; color:var(--text-secondary);">
+          <summary style="cursor:pointer; color:var(--amber); font-weight:500;">How do I get an API key?</summary>
+          <ol style="margin:0.75rem 0 0 1.25rem; line-height:1.8; color:var(--text-secondary);">
+            <li>Go to <a href="https://console.anthropic.com" target="_blank" rel="noopener" style="color:var(--amber-light); text-decoration:underline;">console.anthropic.com</a> and sign up or log in</li>
+            <li>Navigate to <strong style="color:var(--cream);">Settings &rarr; API Keys</strong> in the sidebar</li>
+            <li>Click <strong style="color:var(--cream);">Create Key</strong> and give it a name</li>
+            <li>Copy the key (starts with <code style="background:var(--bg-input); padding:0.1rem 0.4rem; border-radius:4px; font-size:0.8rem;">sk-ant-api03-...</code>) and paste it above</li>
+          </ol>
+          <p style="margin-top:0.5rem; font-size:0.8rem; color:var(--text-muted);">
+            New accounts get free credits to start. This app uses Claude Sonnet which costs roughly $0.01 per set of flashcards generated.
+          </p>
+        </details>
+      </div>
+    </div>
+
+    <!-- Generate -->
+    <button class="generate-btn" id="generateBtn" onclick="generate()">Generate Flashcards</button>
+
+    <!-- Status -->
+    <div class="status" id="status"></div>
+
+    <!-- Results -->
+    <div id="results" class="hidden">
+      <div class="section" style="background:transparent; border:none; padding:0;">
+        <!-- Save Deck Bar -->
+        <div style="display:flex; gap:0.75rem; margin-bottom:1rem; align-items:center;">
+          <input type="text" id="deckNameInput" placeholder="Deck name (e.g., Biology Ch. 5)" style="flex:1;">
+          <button class="generate-btn" style="width:auto; padding:0.75rem 1.5rem; font-size:0.95rem;" onclick="saveDeck()">Save Deck</button>
+        </div>
+
+        <!-- Mode Toggle -->
+        <div class="mode-toggle" id="modeToggle">
+          <button class="mode-tab active" onclick="switchMode('study')">Study</button>
+          <button class="mode-tab" onclick="switchMode('quiz')">Quiz</button>
+        </div>
+
+        <!-- Study Mode -->
+        <div id="studyMode">
+          <div class="cards-header">
+            <h2>Your Flashcards</h2>
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <span class="card-counter" id="cardCounter">1 / 10</span>
+              <div class="cards-nav">
+                <button class="nav-btn" id="prevBtn" onclick="prevCard()">&#8592;</button>
+                <button class="nav-btn" id="nextBtn" onclick="nextCard()">&#8594;</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-viewport" onclick="flipCard()">
+            <div class="flashcard" id="flashcard">
+              <div class="card-face card-front">
+                <span class="card-label">Question</span>
+                <span class="card-topic" id="cardTopic"></span>
+                <div class="card-text" id="cardQuestion"></div>
+                <span class="card-difficulty" id="cardDiffFront"></span>
+              </div>
+              <div class="card-face card-back">
+                <span class="card-label">Answer</span>
+                <div class="card-text" id="cardAnswer"></div>
+                <span class="card-difficulty" id="cardDiffBack"></span>
+              </div>
+            </div>
+          </div>
+
+          <p class="flip-hint">Click the card to flip it</p>
+
+          <div class="progress-dots" id="progressDots"></div>
+
+          <div class="export-bar" id="exportBar">
+            <button class="export-btn" onclick="exportJSON()">Export JSON</button>
+            <button class="export-btn" onclick="exportCSV()">Export CSV</button>
+            <button class="export-btn" onclick="exportText()">Export Text</button>
+          </div>
+        </div>
+
+        <!-- Quiz Mode -->
+        <div id="quizMode" class="hidden">
+          <div class="quiz-progress">
+            <div class="quiz-progress-text">
+              <span id="quizProgressLabel">Question 1 of 10</span>
+              <span id="quizScoreLabel">Score: 0 / 0</span>
+            </div>
+            <div class="quiz-progress-bar">
+              <div class="quiz-progress-fill" id="quizProgressFill" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div class="quiz-panel" id="quizPanel">
+            <div class="quiz-topic-row">
+              <span class="quiz-question-label">Question</span>
+              <span class="card-topic" id="quizTopic"></span>
+            </div>
+            <div class="quiz-question-text" id="quizQuestionText"></div>
+            <span class="card-difficulty" id="quizDifficulty" style="position:static; display:inline-block; margin-top:0.5rem;"></span>
+          </div>
+
+          <div class="quiz-input-area" id="quizInputArea">
+            <textarea id="quizAnswerInput" placeholder="Type your answer here..."></textarea>
+            <button class="quiz-submit-btn" id="quizSubmitBtn" onclick="submitQuizAnswer()">Submit Answer</button>
+          </div>
+
+          <div class="quiz-feedback hidden" id="quizFeedback">
+            <div class="ai-verdict hidden" id="aiVerdict">
+              <span class="verdict-icon" id="verdictIcon"></span>
+              <div class="verdict-text">
+                <strong id="verdictLabel"></strong>
+                <span id="verdictExplanation"></span>
+              </div>
+            </div>
+            <div class="feedback-label your-answer">Your Answer</div>
+            <div class="feedback-text" id="quizUserAnswerText"></div>
+            <div class="feedback-label correct-answer">Correct Answer</div>
+            <div class="feedback-text" id="quizCorrectAnswerText"></div>
+            <div class="self-grade-label hidden" id="selfGradeLabel">How did you do?</div>
+            <div class="self-grade hidden" id="selfGrade">
+              <button class="grade-btn correct" onclick="gradeAnswer(true)">I Got It Right</button>
+              <button class="grade-btn incorrect" onclick="gradeAnswer(false)">I Got It Wrong</button>
+            </div>
+          </div>
+
+          <button class="quiz-next-btn hidden" id="quizNextBtn" onclick="nextQuizQuestion()">Next Question</button>
+        </div>
+
+        <!-- Quiz Results -->
+        <div id="quizResults" class="hidden">
+          <div class="quiz-results">
+            <div class="quiz-score-big" id="quizScoreBig">0%</div>
+            <div class="quiz-score-label" id="quizScoreDetail">0 of 0 correct</div>
+            <div class="quiz-score-bar">
+              <div class="quiz-score-fill" id="quizScoreFill" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="quiz-review" id="quizReview">
+            <h3>Review</h3>
+            <div id="quizReviewList"></div>
+          </div>
+          <div class="quiz-actions">
+            <button class="quiz-action-btn primary" onclick="retakeQuiz()">Retake Quiz</button>
+            <button class="quiz-action-btn secondary" onclick="switchMode('study')">Back to Study</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- AI Configuration Section -->
-  <div class="section" id="aiSection">
-    <div class="section-title"><span class="icon">&#128273;</span> AI Enhancement <span style="font-size:0.75rem; font-family:'Source Serif 4',serif; font-weight:400; color:var(--text-muted); margin-left:0.5rem;" id="aiSectionBadge">(Optional)</span></div>
-
-    <!-- Shown when WORKER_URL is configured -->
-    <div id="workerModeUI" style="display:none">
-      <p style="font-size:1rem; color:var(--success); font-weight:600; letter-spacing:0.01em;">&#10024; Create your flashcards with AI — instantly, for free.</p>
-      <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.5rem;">Paste any text, notes, or topic and let AI turn it into smart study cards. No account or API key needed.</p>
+  <!-- ==================== PAGE: DASHBOARD ==================== -->
+  <div class="page" id="page-dashboard">
+    <div class="section-title" style="font-size:1.4rem; margin-bottom:1.5rem;"><span class="icon">&#128202;</span> Dashboard</div>
+    <div class="dashboard-grid" id="dashboardStats"></div>
+    <div class="section" id="dashboardActivity">
+      <div class="section-title"><span class="icon">&#128197;</span> Recent Activity</div>
+      <div id="recentActivity"></div>
     </div>
-
-    <!-- Shown in default mode (no worker configured) -->
-    <div id="apiKeyModeUI">
-      <p style="font-size:0.9rem; color:var(--success); margin-bottom:0.75rem; font-weight:500;">
-        &#10003; This app is free to use! Flashcards are generated locally from your text.
-      </p>
-      <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.75rem;">
-        Want even better results? Add a Claude API key for AI-powered generation and smart quiz grading.
-      </p>
-      <div>
-        <label for="apiKey">Anthropic API Key (optional)</label>
-        <input type="password" id="apiKey" placeholder="sk-ant-api03-... (leave blank for free mode)">
-    </div>
-    <details style="margin-top:0.75rem; font-size:0.85rem; color:var(--text-secondary);">
-      <summary style="cursor:pointer; color:var(--amber); font-weight:500;">How do I get an API key?</summary>
-      <ol style="margin:0.75rem 0 0 1.25rem; line-height:1.8; color:var(--text-secondary);">
-        <li>Go to <a href="https://console.anthropic.com" target="_blank" rel="noopener" style="color:var(--amber-light); text-decoration:underline;">console.anthropic.com</a> and sign up or log in</li>
-        <li>Navigate to <strong style="color:var(--cream);">Settings &rarr; API Keys</strong> in the sidebar</li>
-        <li>Click <strong style="color:var(--cream);">Create Key</strong> and give it a name</li>
-        <li>Copy the key (starts with <code style="background:var(--bg-input); padding:0.1rem 0.4rem; border-radius:4px; font-size:0.8rem;">sk-ant-api03-...</code>) and paste it above</li>
-      </ol>
-      <p style="margin-top:0.5rem; font-size:0.8rem; color:var(--text-muted);">
-        New accounts get free credits to start. This app uses Claude Sonnet which costs roughly $0.01 per set of flashcards generated.
-      </p>
-    </details>
-    </div><!-- end #apiKeyModeUI -->
   </div>
 
-  <!-- Generate -->
-  <button class="generate-btn" id="generateBtn" onclick="generate()">Generate Flashcards</button>
+  <!-- ==================== PAGE: DECKS ==================== -->
+  <div class="page" id="page-decks">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+      <div class="section-title" style="margin-bottom:0; font-size:1.4rem;"><span class="icon">&#128218;</span> My Decks</div>
+      <button class="export-btn" onclick="importDeck()" style="padding:0.6rem 1.2rem;">Import Deck</button>
+    </div>
+    <div class="deck-list" id="deckList"></div>
+  </div>
 
-  <!-- Status -->
-  <div class="status" id="status"></div>
+  <!-- ==================== PAGE: REVIEW (SRS) ==================== -->
+  <div class="page" id="page-review">
+    <div class="section-title" style="font-size:1.4rem; margin-bottom:1.5rem;"><span class="icon">&#128257;</span> Spaced Repetition Review</div>
 
-  <!-- Results -->
-  <div id="results" class="hidden">
-    <div class="section" style="background:transparent; border:none; padding:0;">
-      <!-- Mode Toggle -->
-      <div class="mode-toggle" id="modeToggle">
-        <button class="mode-tab active" onclick="switchMode('study')">Study</button>
-        <button class="mode-tab" onclick="switchMode('quiz')">Quiz</button>
-      </div>
+    <!-- Deck selection for review -->
+    <div id="reviewDeckSelect" class="section">
+      <p style="color:var(--text-secondary); margin-bottom:1rem;">Select a deck to review due cards:</p>
+      <div class="deck-list" id="reviewDeckList"></div>
+    </div>
 
-      <!-- Study Mode -->
-      <div id="studyMode">
-        <div class="cards-header">
-          <h2>Your Flashcards</h2>
-          <div style="display:flex; align-items:center; gap:1rem;">
-            <span class="card-counter" id="cardCounter">1 / 10</span>
-            <div class="cards-nav">
-              <button class="nav-btn" id="prevBtn" onclick="prevCard()">&#8592;</button>
-              <button class="nav-btn" id="nextBtn" onclick="nextCard()">&#8594;</button>
-            </div>
-          </div>
+    <!-- Active review session -->
+    <div id="reviewSession" class="hidden">
+      <div class="quiz-progress">
+        <div class="quiz-progress-text">
+          <span id="reviewProgressLabel">Card 1 of 10</span>
+          <span id="reviewDeckLabel"></span>
         </div>
-
-        <div class="card-viewport" onclick="flipCard()">
-          <div class="flashcard" id="flashcard">
-            <div class="card-face card-front">
-              <span class="card-label">Question</span>
-              <span class="card-topic" id="cardTopic"></span>
-              <div class="card-text" id="cardQuestion"></div>
-              <span class="card-difficulty" id="cardDiffFront"></span>
-            </div>
-            <div class="card-face card-back">
-              <span class="card-label">Answer</span>
-              <div class="card-text" id="cardAnswer"></div>
-              <span class="card-difficulty" id="cardDiffBack"></span>
-            </div>
-          </div>
-        </div>
-
-        <p class="flip-hint">Click the card to flip it</p>
-
-        <div class="progress-dots" id="progressDots"></div>
-
-        <div class="export-bar" id="exportBar">
-          <button class="export-btn" onclick="exportJSON()">Export JSON</button>
-          <button class="export-btn" onclick="exportCSV()">Export CSV</button>
-          <button class="export-btn" onclick="exportText()">Export Text</button>
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="reviewProgressFill" style="width:0%"></div>
         </div>
       </div>
 
-      <!-- Quiz Mode -->
-      <div id="quizMode" class="hidden">
-        <!-- Quiz Progress -->
-        <div class="quiz-progress">
-          <div class="quiz-progress-text">
-            <span id="quizProgressLabel">Question 1 of 10</span>
-            <span id="quizScoreLabel">Score: 0 / 0</span>
+      <div class="card-viewport" onclick="flipReviewCard()" id="reviewCardViewport">
+        <div class="flashcard" id="reviewFlashcard">
+          <div class="card-face card-front">
+            <span class="card-label">Question</span>
+            <span class="card-topic" id="reviewCardTopic"></span>
+            <div class="card-text" id="reviewCardQuestion"></div>
+            <span class="card-difficulty" id="reviewCardDiff"></span>
           </div>
-          <div class="quiz-progress-bar">
-            <div class="quiz-progress-fill" id="quizProgressFill" style="width:0%"></div>
+          <div class="card-face card-back">
+            <span class="card-label">Answer</span>
+            <div class="card-text" id="reviewCardAnswer"></div>
           </div>
-        </div>
-
-        <!-- Quiz Question -->
-        <div class="quiz-panel" id="quizPanel">
-          <div class="quiz-topic-row">
-            <span class="quiz-question-label">Question</span>
-            <span class="card-topic" id="quizTopic"></span>
-          </div>
-          <div class="quiz-question-text" id="quizQuestionText"></div>
-          <span class="card-difficulty" id="quizDifficulty" style="position:static; display:inline-block; margin-top:0.5rem;"></span>
-        </div>
-
-        <!-- Answer Input -->
-        <div class="quiz-input-area" id="quizInputArea">
-          <textarea id="quizAnswerInput" placeholder="Type your answer here..."></textarea>
-          <button class="quiz-submit-btn" id="quizSubmitBtn" onclick="submitQuizAnswer()">Submit Answer</button>
-        </div>
-
-        <!-- Feedback (shown after submit) -->
-        <div class="quiz-feedback hidden" id="quizFeedback">
-          <!-- AI Verdict (shown when API key available) -->
-          <div class="ai-verdict hidden" id="aiVerdict">
-            <span class="verdict-icon" id="verdictIcon"></span>
-            <div class="verdict-text">
-              <strong id="verdictLabel"></strong>
-              <span id="verdictExplanation"></span>
-            </div>
-          </div>
-          <div class="feedback-label your-answer">Your Answer</div>
-          <div class="feedback-text" id="quizUserAnswerText"></div>
-          <div class="feedback-label correct-answer">Correct Answer</div>
-          <div class="feedback-text" id="quizCorrectAnswerText"></div>
-          <!-- Self-grade (fallback for demo mode) -->
-          <div class="self-grade-label hidden" id="selfGradeLabel">How did you do?</div>
-          <div class="self-grade hidden" id="selfGrade">
-            <button class="grade-btn correct" onclick="gradeAnswer(true)">I Got It Right</button>
-            <button class="grade-btn incorrect" onclick="gradeAnswer(false)">I Got It Wrong</button>
-          </div>
-        </div>
-
-        <!-- Next button (shown after grading) -->
-        <button class="quiz-next-btn hidden" id="quizNextBtn" onclick="nextQuizQuestion()">Next Question</button>
-      </div>
-
-      <!-- Quiz Results -->
-      <div id="quizResults" class="hidden">
-        <div class="quiz-results">
-          <div class="quiz-score-big" id="quizScoreBig">0%</div>
-          <div class="quiz-score-label" id="quizScoreDetail">0 of 0 correct</div>
-          <div class="quiz-score-bar">
-            <div class="quiz-score-fill" id="quizScoreFill" style="width:0%"></div>
-          </div>
-        </div>
-
-        <div class="quiz-review" id="quizReview">
-          <h3>Review</h3>
-          <div id="quizReviewList"></div>
-        </div>
-
-        <div class="quiz-actions">
-          <button class="quiz-action-btn primary" onclick="retakeQuiz()">Retake Quiz</button>
-          <button class="quiz-action-btn secondary" onclick="switchMode('study')">Back to Study</button>
         </div>
       </div>
 
+      <p class="flip-hint" id="reviewFlipHint">Click to reveal answer</p>
+
+      <div class="srs-buttons hidden" id="srsButtons">
+        <button class="srs-btn again" onclick="rateSRS(0)">Again<span class="srs-interval" id="srsAgainInt"></span></button>
+        <button class="srs-btn hard" onclick="rateSRS(3)">Hard<span class="srs-interval" id="srsHardInt"></span></button>
+        <button class="srs-btn good" onclick="rateSRS(4)">Good<span class="srs-interval" id="srsGoodInt"></span></button>
+        <button class="srs-btn easy" onclick="rateSRS(5)">Easy<span class="srs-interval" id="srsEasyInt"></span></button>
+      </div>
+
+      <div id="reviewComplete" class="hidden" style="text-align:center; padding:2rem 0;">
+        <div style="font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--success); margin-bottom:0.5rem;">Review Complete!</div>
+        <p style="color:var(--text-secondary);" id="reviewSummary"></p>
+        <div class="quiz-actions" style="margin-top:1.5rem;">
+          <button class="quiz-action-btn primary" onclick="showPage('review')">Back to Review</button>
+          <button class="quiz-action-btn secondary" onclick="showPage('dashboard')">Dashboard</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== MODAL: SHARE ==================== -->
+<div class="modal-overlay" id="shareModal">
+  <div class="modal">
+    <h3>Share Deck</h3>
+    <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">Share this deck via link or QR code. Anyone with the link can import it.</p>
+    <label>Shareable Link</label>
+    <div class="share-url-box" id="shareUrl"></div>
+    <button class="export-btn" onclick="copyShareLink()" id="copyLinkBtn" style="width:100%; margin-bottom:1rem;">Copy Link</button>
+    <div class="qr-container" id="qrContainer"></div>
+    <div class="modal-actions">
+      <button class="quiz-action-btn secondary" onclick="closeModal('shareModal')">Close</button>
     </div>
   </div>
 </div>
 
+<!-- ==================== MODAL: RENAME ==================== -->
+<div class="modal-overlay" id="renameModal">
+  <div class="modal">
+    <h3>Rename Deck</h3>
+    <label>New Name</label>
+    <input type="text" id="renameInput">
+    <div class="modal-actions">
+      <button class="quiz-action-btn secondary" onclick="closeModal('renameModal')">Cancel</button>
+      <button class="quiz-action-btn primary" onclick="confirmRename()">Rename</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(event)">
+
 <script>
   // ─── Cloudflare Worker URL ────────────────────────────────────────────────
-  // After deploying worker.js, paste your *.workers.dev URL here so all users
-  // get AI-powered generation for free with no API key required.
-  // Leave empty ('') to fall back to the API key field or local generation.
   const WORKER_URL = 'https://flashcard-generator.khushiflashcard.workers.dev';
   // ─────────────────────────────────────────────────────────────────────────
 
+  // ─── State ───────────────────────────────────────────────────────────────
   let cards = [];
   let currentIndex = 0;
+  let currentPage = 'generate';
 
   // Quiz state
   let quizActive = false;
   let quizOrder = [];
   let quizCurrentIndex = 0;
-  let quizAnswers = []; // { userAnswer, correct, cardIndex }
+  let quizAnswers = [];
   let quizSubmitted = false;
   let quizGraded = false;
+
+  // SRS review state
+  let reviewDeckId = null;
+  let reviewCards = [];
+  let reviewIndex = 0;
+  let reviewFlipped = false;
+  let reviewedCount = 0;
+
+  // Modal state
+  let renameDeckId = null;
 
   const SYSTEM_PROMPT = `You are a flashcard generation expert. When given any text, extract the most important concepts and generate study flashcards.
 STRICT OUTPUT FORMAT — return ONLY a raw JSON array. No preamble, no explanation, no markdown code blocks, no backticks. Just the JSON array itself.
@@ -973,6 +1343,735 @@ Rules:
 - For hard cards, ask 'why', 'how', or 'what would happen if' questions
 - topic field should categorize the card (e.g. "Neural Networks", "Cell Biology")`;
 
+  // ─── localStorage Deck Manager ───────────────────────────────────────────
+  const STORAGE_KEY = 'flashcard_decks';
+
+  function loadDecks() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    } catch { return {}; }
+  }
+
+  function saveDecks(decks) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(decks));
+  }
+
+  function generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  function saveDeck() {
+    const name = document.getElementById('deckNameInput').value.trim();
+    if (!name) {
+      alert('Please enter a deck name.');
+      return;
+    }
+    if (cards.length === 0) {
+      alert('No cards to save.');
+      return;
+    }
+
+    const decks = loadDecks();
+    const id = generateId();
+    const now = Date.now();
+
+    // Initialize SRS data for each card
+    const srsCards = cards.map(c => ({
+      ...c,
+      srs: {
+        easeFactor: 2.5,
+        interval: 0,
+        repetitions: 0,
+        nextReview: now,
+        lastReview: null
+      }
+    }));
+
+    decks[id] = {
+      name,
+      cards: srsCards,
+      createdAt: now,
+      lastStudied: null,
+      reviewCount: 0
+    };
+
+    saveDecks(decks);
+    document.getElementById('deckNameInput').value = '';
+    updateDueBadge();
+    alert(`Deck "${name}" saved with ${cards.length} cards!`);
+  }
+
+  function deleteDeck(id) {
+    if (!confirm('Delete this deck? This cannot be undone.')) return;
+    const decks = loadDecks();
+    delete decks[id];
+    saveDecks(decks);
+    renderDecks();
+    updateDueBadge();
+  }
+
+  function openRenameModal(id) {
+    renameDeckId = id;
+    const decks = loadDecks();
+    document.getElementById('renameInput').value = decks[id].name;
+    openModal('renameModal');
+    setTimeout(() => document.getElementById('renameInput').focus(), 100);
+  }
+
+  function confirmRename() {
+    const newName = document.getElementById('renameInput').value.trim();
+    if (!newName) return;
+    const decks = loadDecks();
+    if (decks[renameDeckId]) {
+      decks[renameDeckId].name = newName;
+      saveDecks(decks);
+    }
+    closeModal('renameModal');
+    renderDecks();
+  }
+
+  function loadDeckIntoStudy(id) {
+    const decks = loadDecks();
+    const deck = decks[id];
+    if (!deck) return;
+
+    cards = deck.cards.map(c => ({
+      question: c.question,
+      answer: c.answer,
+      difficulty: c.difficulty,
+      topic: c.topic
+    }));
+
+    decks[id].lastStudied = Date.now();
+    saveDecks(decks);
+
+    showPage('generate');
+    document.getElementById('deckNameInput').value = deck.name;
+    displayCards();
+  }
+
+  // ─── Spaced Repetition (SM-2 Algorithm) ──────────────────────────────────
+  function getDueCards(deckId) {
+    const decks = loadDecks();
+    const deck = decks[deckId];
+    if (!deck) return [];
+
+    const now = Date.now();
+    return deck.cards
+      .map((c, i) => ({ ...c, cardIndex: i }))
+      .filter(c => c.srs.nextReview <= now);
+  }
+
+  function getAllDueCount() {
+    const decks = loadDecks();
+    const now = Date.now();
+    let total = 0;
+    for (const deck of Object.values(decks)) {
+      total += deck.cards.filter(c => c.srs.nextReview <= now).length;
+    }
+    return total;
+  }
+
+  function updateDueBadge() {
+    const count = getAllDueCount();
+    const badge = document.getElementById('dueBadge');
+    if (count > 0) {
+      badge.textContent = count > 99 ? '99+' : count;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
+
+  function calculateSRS(card, quality) {
+    // SM-2 Algorithm
+    // quality: 0 = again, 3 = hard, 4 = good, 5 = easy
+    let { easeFactor, interval, repetitions } = card.srs;
+    const now = Date.now();
+
+    if (quality < 3) {
+      // Failed — reset
+      repetitions = 0;
+      interval = 0;
+    } else {
+      if (repetitions === 0) {
+        interval = 1; // 1 minute for first review (in minutes)
+      } else if (repetitions === 1) {
+        interval = 10; // 10 minutes
+      } else {
+        interval = Math.round(interval * easeFactor);
+      }
+      repetitions++;
+    }
+
+    // Update ease factor
+    easeFactor = easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+    if (easeFactor < 1.3) easeFactor = 1.3;
+
+    // Convert interval to milliseconds
+    let nextReview;
+    if (quality < 3) {
+      nextReview = now + 60 * 1000; // 1 minute
+    } else if (repetitions <= 1) {
+      nextReview = now + interval * 60 * 1000; // minutes
+    } else {
+      // After first 2 reviews, interval is in days
+      nextReview = now + interval * 24 * 60 * 60 * 1000;
+    }
+
+    return {
+      easeFactor: Math.round(easeFactor * 100) / 100,
+      interval,
+      repetitions,
+      nextReview,
+      lastReview: now
+    };
+  }
+
+  function formatInterval(quality, card) {
+    const result = calculateSRS(card, quality);
+    const diffMs = result.nextReview - Date.now();
+    const mins = Math.round(diffMs / 60000);
+    const hours = Math.round(diffMs / 3600000);
+    const days = Math.round(diffMs / 86400000);
+
+    if (mins < 60) return `${mins}m`;
+    if (hours < 24) return `${hours}h`;
+    if (days < 30) return `${days}d`;
+    return `${Math.round(days / 30)}mo`;
+  }
+
+  function startReviewSession(deckId) {
+    reviewDeckId = deckId;
+    const dueCards = getDueCards(deckId);
+
+    if (dueCards.length === 0) {
+      alert('No cards due for review in this deck!');
+      return;
+    }
+
+    // Shuffle due cards
+    for (let i = dueCards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [dueCards[i], dueCards[j]] = [dueCards[j], dueCards[i]];
+    }
+
+    reviewCards = dueCards;
+    reviewIndex = 0;
+    reviewedCount = 0;
+    reviewFlipped = false;
+
+    const decks = loadDecks();
+    document.getElementById('reviewDeckLabel').textContent = decks[deckId].name;
+
+    document.getElementById('reviewDeckSelect').classList.add('hidden');
+    document.getElementById('reviewSession').classList.remove('hidden');
+    document.getElementById('reviewComplete').classList.add('hidden');
+    document.getElementById('reviewCardViewport').classList.remove('hidden');
+    document.getElementById('reviewFlipHint').classList.remove('hidden');
+
+    showReviewCard();
+  }
+
+  function showReviewCard() {
+    if (reviewIndex >= reviewCards.length) {
+      finishReview();
+      return;
+    }
+
+    const card = reviewCards[reviewIndex];
+    reviewFlipped = false;
+
+    document.getElementById('reviewFlashcard').classList.remove('flipped');
+    document.getElementById('reviewCardQuestion').textContent = card.question;
+    document.getElementById('reviewCardAnswer').textContent = card.answer;
+    document.getElementById('reviewCardTopic').textContent = card.topic;
+
+    const diffClass = 'diff-' + card.difficulty;
+    const diffText = card.difficulty.charAt(0).toUpperCase() + card.difficulty.slice(1);
+    const diffEl = document.getElementById('reviewCardDiff');
+    diffEl.className = 'card-difficulty ' + diffClass;
+    diffEl.textContent = diffText;
+
+    document.getElementById('reviewProgressLabel').textContent =
+      `Card ${reviewIndex + 1} of ${reviewCards.length}`;
+    document.getElementById('reviewProgressFill').style.width =
+      `${(reviewIndex / reviewCards.length) * 100}%`;
+
+    document.getElementById('srsButtons').classList.add('hidden');
+    document.getElementById('reviewFlipHint').classList.remove('hidden');
+
+    // Show intervals
+    document.getElementById('srsAgainInt').textContent = formatInterval(0, card);
+    document.getElementById('srsHardInt').textContent = formatInterval(3, card);
+    document.getElementById('srsGoodInt').textContent = formatInterval(4, card);
+    document.getElementById('srsEasyInt').textContent = formatInterval(5, card);
+  }
+
+  function flipReviewCard() {
+    if (reviewFlipped) return;
+    reviewFlipped = true;
+    document.getElementById('reviewFlashcard').classList.add('flipped');
+    document.getElementById('srsButtons').classList.remove('hidden');
+    document.getElementById('reviewFlipHint').classList.add('hidden');
+  }
+
+  function rateSRS(quality) {
+    const card = reviewCards[reviewIndex];
+    const newSRS = calculateSRS(card, quality);
+
+    // Save to localStorage
+    const decks = loadDecks();
+    const deck = decks[reviewDeckId];
+    if (deck) {
+      deck.cards[card.cardIndex].srs = newSRS;
+      deck.reviewCount = (deck.reviewCount || 0) + 1;
+      deck.lastStudied = Date.now();
+      saveDecks(decks);
+    }
+
+    reviewedCount++;
+    reviewIndex++;
+    updateDueBadge();
+
+    if (reviewIndex >= reviewCards.length) {
+      finishReview();
+    } else {
+      showReviewCard();
+    }
+  }
+
+  function finishReview() {
+    document.getElementById('reviewCardViewport').classList.add('hidden');
+    document.getElementById('srsButtons').classList.add('hidden');
+    document.getElementById('reviewFlipHint').classList.add('hidden');
+    document.getElementById('reviewComplete').classList.remove('hidden');
+    document.getElementById('reviewProgressFill').style.width = '100%';
+    document.getElementById('reviewSummary').textContent =
+      `You reviewed ${reviewedCount} card${reviewedCount !== 1 ? 's' : ''} in this session.`;
+  }
+
+  // ─── Share via URL / QR ──────────────────────────────────────────────────
+  function shareDeck(id) {
+    const decks = loadDecks();
+    const deck = decks[id];
+    if (!deck) return;
+
+    // Compress deck data — only essential fields
+    const shareData = {
+      n: deck.name,
+      c: deck.cards.map(c => ({
+        q: c.question,
+        a: c.answer,
+        d: c.difficulty,
+        t: c.topic
+      }))
+    };
+
+    const json = JSON.stringify(shareData);
+    const compressed = btoa(unescape(encodeURIComponent(json)));
+    const url = window.location.origin + window.location.pathname + '?deck=' + encodeURIComponent(compressed);
+
+    document.getElementById('shareUrl').textContent = url;
+    document.getElementById('copyLinkBtn').textContent = 'Copy Link';
+
+    // Generate QR code
+    generateQR(url);
+
+    openModal('shareModal');
+  }
+
+  function copyShareLink() {
+    const url = document.getElementById('shareUrl').textContent;
+    navigator.clipboard.writeText(url).then(() => {
+      document.getElementById('copyLinkBtn').textContent = 'Copied!';
+      setTimeout(() => {
+        document.getElementById('copyLinkBtn').textContent = 'Copy Link';
+      }, 2000);
+    });
+  }
+
+  function generateQR(text) {
+    const container = document.getElementById('qrContainer');
+    container.innerHTML = '';
+
+    // Simple QR code using a canvas-based approach
+    // We'll use a minimal QR generation for the URL
+    const size = 200;
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+
+    // Use the QR code library loaded from CDN
+    if (typeof QRCode !== 'undefined') {
+      // If QRCode library available
+      const qr = new QRCode(container, {
+        text: text,
+        width: size,
+        height: size,
+        colorDark: '#1a1a1a',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.L
+      });
+    } else {
+      // Fallback: show a message
+      container.innerHTML = '<p style="color:var(--text-muted); font-size:0.85rem;">QR code generation requires internet. Copy the link above instead.</p>';
+
+      // Dynamically load QR library
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js';
+      script.onload = () => {
+        container.innerHTML = '';
+        new QRCode(container, {
+          text: text,
+          width: size,
+          height: size,
+          colorDark: '#1a1a1a',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.L
+        });
+      };
+      document.head.appendChild(script);
+    }
+  }
+
+  function checkForSharedDeck() {
+    const params = new URLSearchParams(window.location.search);
+    const deckData = params.get('deck');
+    if (!deckData) return;
+
+    try {
+      const json = decodeURIComponent(escape(atob(decodeURIComponent(deckData))));
+      const shareData = JSON.parse(json);
+
+      const deckName = shareData.n || 'Imported Deck';
+      const importedCards = (shareData.c || []).map(c => ({
+        question: c.q,
+        answer: c.a,
+        difficulty: c.d || 'medium',
+        topic: c.t || 'General'
+      }));
+
+      if (importedCards.length === 0) return;
+
+      if (confirm(`Import deck "${deckName}" with ${importedCards.length} cards?`)) {
+        const decks = loadDecks();
+        const id = generateId();
+        const now = Date.now();
+
+        decks[id] = {
+          name: deckName,
+          cards: importedCards.map(c => ({
+            ...c,
+            srs: {
+              easeFactor: 2.5,
+              interval: 0,
+              repetitions: 0,
+              nextReview: now,
+              lastReview: null
+            }
+          })),
+          createdAt: now,
+          lastStudied: null,
+          reviewCount: 0
+        };
+
+        saveDecks(decks);
+        updateDueBadge();
+
+        // Clean URL
+        window.history.replaceState({}, '', window.location.pathname);
+
+        showPage('decks');
+        alert(`Deck "${deckName}" imported successfully!`);
+      } else {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    } catch (e) {
+      console.error('Failed to import shared deck:', e);
+    }
+  }
+
+  // ─── Import/Export Decks ─────────────────────────────────────────────────
+  function importDeck() {
+    document.getElementById('importFileInput').click();
+  }
+
+  function handleImport(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const data = JSON.parse(e.target.result);
+        let importedCards;
+        let deckName = file.name.replace('.json', '');
+
+        // Handle both raw card arrays and full deck objects
+        if (Array.isArray(data)) {
+          importedCards = data;
+        } else if (data.cards && Array.isArray(data.cards)) {
+          importedCards = data.cards;
+          if (data.name) deckName = data.name;
+        } else {
+          throw new Error('Invalid format');
+        }
+
+        if (importedCards.length === 0) throw new Error('No cards found');
+
+        const decks = loadDecks();
+        const id = generateId();
+        const now = Date.now();
+
+        decks[id] = {
+          name: deckName,
+          cards: importedCards.map(c => ({
+            question: c.question || c.q,
+            answer: c.answer || c.a,
+            difficulty: c.difficulty || c.d || 'medium',
+            topic: c.topic || c.t || 'General',
+            srs: c.srs || {
+              easeFactor: 2.5,
+              interval: 0,
+              repetitions: 0,
+              nextReview: now,
+              lastReview: null
+            }
+          })),
+          createdAt: now,
+          lastStudied: null,
+          reviewCount: 0
+        };
+
+        saveDecks(decks);
+        updateDueBadge();
+        renderDecks();
+        alert(`Imported "${deckName}" with ${importedCards.length} cards!`);
+      } catch (err) {
+        alert('Failed to import: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+  }
+
+  function exportDeck(id) {
+    const decks = loadDecks();
+    const deck = decks[id];
+    if (!deck) return;
+
+    const exportData = {
+      name: deck.name,
+      cards: deck.cards.map(c => ({
+        question: c.question,
+        answer: c.answer,
+        difficulty: c.difficulty,
+        topic: c.topic
+      })),
+      exportedAt: new Date().toISOString()
+    };
+
+    download(deck.name + '.json', JSON.stringify(exportData, null, 2), 'application/json');
+  }
+
+  // ─── Page Navigation ─────────────────────────────────────────────────────
+  function showPage(page) {
+    currentPage = page;
+
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+
+    document.querySelectorAll('.main-nav-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', ['generate', 'dashboard', 'decks', 'review'][i] === page);
+    });
+
+    if (page === 'dashboard') renderDashboard();
+    if (page === 'decks') renderDecks();
+    if (page === 'review') renderReviewPage();
+  }
+
+  // ─── Render Functions ────────────────────────────────────────────────────
+  function renderDashboard() {
+    const decks = loadDecks();
+    const deckEntries = Object.entries(decks);
+    const now = Date.now();
+
+    let totalCards = 0;
+    let totalDue = 0;
+    let totalReviews = 0;
+    let masteredCards = 0;
+
+    deckEntries.forEach(([_, deck]) => {
+      totalCards += deck.cards.length;
+      totalReviews += deck.reviewCount || 0;
+      deck.cards.forEach(c => {
+        if (c.srs.nextReview <= now) totalDue++;
+        if (c.srs.repetitions >= 5 && c.srs.easeFactor >= 2.3) masteredCards++;
+      });
+    });
+
+    const statsHtml = `
+      <div class="stat-card ${totalDue > 0 ? 'urgent' : ''}">
+        <div class="stat-value">${totalDue}</div>
+        <div class="stat-label">Cards Due</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${deckEntries.length}</div>
+        <div class="stat-label">Decks</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${totalCards}</div>
+        <div class="stat-label">Total Cards</div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-value">${masteredCards}</div>
+        <div class="stat-label">Mastered</div>
+      </div>
+    `;
+    document.getElementById('dashboardStats').innerHTML = statsHtml;
+
+    // Recent activity
+    const activity = deckEntries
+      .filter(([_, d]) => d.lastStudied)
+      .sort((a, b) => b[1].lastStudied - a[1].lastStudied)
+      .slice(0, 5);
+
+    if (activity.length === 0) {
+      document.getElementById('recentActivity').innerHTML =
+        '<p style="color:var(--text-muted);">No activity yet. Create a deck and start reviewing!</p>';
+    } else {
+      document.getElementById('recentActivity').innerHTML = activity.map(([_, d]) => {
+        const ago = timeAgo(d.lastStudied);
+        const dueCount = d.cards.filter(c => c.srs.nextReview <= now).length;
+        return `<div style="display:flex; justify-content:space-between; padding:0.6rem 0; border-bottom:1px solid var(--border);">
+          <span style="color:var(--cream);">${escHtml(d.name)}</span>
+          <span style="font-size:0.85rem; color:var(--text-muted);">${ago} &middot; ${dueCount} due</span>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  function renderDecks() {
+    const decks = loadDecks();
+    const entries = Object.entries(decks).sort((a, b) => b[1].createdAt - a[1].createdAt);
+    const list = document.getElementById('deckList');
+
+    if (entries.length === 0) {
+      list.innerHTML = `<div class="empty-state">
+        <p>No decks saved yet</p>
+        <small>Generate flashcards and save them as a deck to see them here.</small>
+      </div>`;
+      return;
+    }
+
+    const now = Date.now();
+    list.innerHTML = entries.map(([id, deck]) => {
+      const dueCount = deck.cards.filter(c => c.srs.nextReview <= now).length;
+      const lastStudied = deck.lastStudied ? timeAgo(deck.lastStudied) : 'Never';
+      return `<div class="deck-item" onclick="loadDeckIntoStudy('${id}')">
+        <div class="deck-info">
+          <div class="deck-name">${escHtml(deck.name)}</div>
+          <div class="deck-meta">
+            <span>${deck.cards.length} cards</span>
+            <span>Last studied: ${lastStudied}</span>
+            ${dueCount > 0 ? `<span class="deck-due">${dueCount} due</span>` : ''}
+          </div>
+        </div>
+        <div class="deck-actions" onclick="event.stopPropagation()">
+          <button class="deck-action-btn" onclick="shareDeck('${id}')" title="Share">&#128279;</button>
+          <button class="deck-action-btn" onclick="exportDeck('${id}')" title="Export">&#8681;</button>
+          <button class="deck-action-btn" onclick="openRenameModal('${id}')" title="Rename">&#9998;</button>
+          <button class="deck-action-btn danger" onclick="deleteDeck('${id}')" title="Delete">&#10005;</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderReviewPage() {
+    const decks = loadDecks();
+    const entries = Object.entries(decks);
+    const now = Date.now();
+
+    document.getElementById('reviewDeckSelect').classList.remove('hidden');
+    document.getElementById('reviewSession').classList.add('hidden');
+
+    const list = document.getElementById('reviewDeckList');
+
+    if (entries.length === 0) {
+      list.innerHTML = `<div class="empty-state">
+        <p>No decks available</p>
+        <small>Save a deck first to start reviewing with spaced repetition.</small>
+      </div>`;
+      return;
+    }
+
+    const decksWithDue = entries
+      .map(([id, deck]) => {
+        const dueCount = deck.cards.filter(c => c.srs.nextReview <= now).length;
+        return { id, deck, dueCount };
+      })
+      .sort((a, b) => b.dueCount - a.dueCount);
+
+    list.innerHTML = decksWithDue.map(({ id, deck, dueCount }) => {
+      const mastered = deck.cards.filter(c => c.srs.repetitions >= 5 && c.srs.easeFactor >= 2.3).length;
+      return `<div class="deck-item ${dueCount === 0 ? '' : ''}" onclick="${dueCount > 0 ? `startReviewSession('${id}')` : ''}">
+        <div class="deck-info">
+          <div class="deck-name">${escHtml(deck.name)}</div>
+          <div class="deck-meta">
+            <span>${deck.cards.length} cards</span>
+            <span>${mastered} mastered</span>
+            ${dueCount > 0
+              ? `<span class="deck-due">${dueCount} due now</span>`
+              : `<span style="color:var(--success);">All caught up!</span>`
+            }
+          </div>
+        </div>
+        ${dueCount > 0
+          ? `<button class="generate-btn" style="width:auto; padding:0.6rem 1.2rem; font-size:0.9rem;" onclick="event.stopPropagation(); startReviewSession('${id}')">Review</button>`
+          : ''
+        }
+      </div>`;
+    }).join('');
+  }
+
+  // ─── Modal Helpers ───────────────────────────────────────────────────────
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  // Close modals on overlay click
+  document.addEventListener('click', e => {
+    if (e.target.classList.contains('modal-overlay')) {
+      e.target.classList.remove('open');
+    }
+  });
+
+  // ─── Utilities ───────────────────────────────────────────────────────────
+  function timeAgo(timestamp) {
+    const diff = Date.now() - timestamp;
+    const mins = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return `${mins}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 30) return `${days}d ago`;
+    return `${Math.floor(days / 30)}mo ago`;
+  }
+
+  function escHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ─── Generation ──────────────────────────────────────────────────────────
   function showStatus(msg, isError = false) {
     const el = document.getElementById('status');
     el.innerHTML = msg;
@@ -997,7 +2096,6 @@ Rules:
     btn.disabled = true;
 
     if (WORKER_URL || apiKey) {
-      // AI-powered generation (via Cloudflare Worker or direct API key)
       showStatus('<span class="spinner"></span> Generating AI-powered flashcards...');
 
       const diffLabel = difficulty === 'mixed' ? 'mixed (include easy, medium, and hard)' : difficulty;
@@ -1059,11 +2157,9 @@ Rules:
         btn.disabled = false;
       }
     } else {
-      // Free local generation — no API key needed
       showStatus('<span class="spinner"></span> Generating flashcards from your text...');
 
       try {
-        // Small delay so spinner shows
         await new Promise(r => setTimeout(r, 300));
         cards = generateLocalFlashcards(text, numCards, difficulty);
 
@@ -1085,14 +2181,12 @@ Rules:
   const STOP_WORDS = new Set(['this','that','with','from','have','been','were','they','their','them','will','would','could','should','about','which','these','those','other','some','what','when','where','there','than','then','also','more','most','into','over','such','only','very','just','like','after','before','between','through','under','each','every','both','many','much','well','back','even','still','here','does','made','make','being','because','while','during','without','within','along','since','until','among','upon','often','might','based','using','used','called','known','found','given','shown','example','however','therefore','although','including','according','following','different','important','another','several','possible','available','provide','provides','specific','particularly','especially','significant','various','certain','general','common','similar','related','particular','involved','result','results','process','system','include','includes','first','second','third','number','part','case','point','group','fact','area','level','form','type','kind','sort','name','word','need','hand','high','long','small','large','good','great','right','left','same','able','next','last','come','came','take','took','give','gave','keep','kept','help','turn','begin','began','seem','show','think','thought','tell','told','play','move','live','believe','hold','bring','happen','write','wrote','stand','lose','lost','mean','meant','read','learn','change','lead','understand','watch','follow','stop','create','speak','allow','grow','open','walk','carry','talk','appear','produce','develop','raise','close','present','receive','remember','consider','serve','expect','remain','suggest','contain','become','became','leave','call','reach','continue','support','hold','describe','note','notice','place','offer','order','rest','clear','field','complete','power','figure','paper','state','form','full','human','nature','social','science','world','earth','water','light','energy','force','space','matter','theory','time','year','years','people','work','life','part','place','world','school','state','family','student','group','country','problem','hand','home','question','information','power','government','company','number','night','point','program','city','business','study','study','book','room','mother','area','money','story','young','month','health','class','college','industry','market','plan','interest','members','course','things']);
 
   function generateLocalFlashcards(text, numCards, difficulty) {
-    // Split into sentences — handles both punctuation-terminated sentences and newline-separated segments
     let sentences = text
       .replace(/\r\n/g, '\n')
       .split(/(?<=[.!?])\s+|\n{2,}/)
       .map(s => s.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim())
       .filter(s => s.length >= 15);
 
-    // Fallback: if still too few, split on single newlines (handles bullet-point style text)
     if (sentences.length < 2) {
       sentences = text
         .split(/\n/)
@@ -1104,7 +2198,6 @@ Rules:
       throw new Error('Text is too short. Please paste more content (at least a few sentences).');
     }
 
-    // Extract key terms: capitalized phrases, technical terms, quoted terms
     const termFrequency = {};
     const words = text.replace(/[^a-zA-Z\s]/g, ' ').split(/\s+/).filter(w => w.length > 3);
     words.forEach(w => {
@@ -1114,14 +2207,12 @@ Rules:
       }
     });
 
-    // Get top terms — allow single occurrences for shorter texts
     const minCount = Object.values(termFrequency).some(c => c >= 2) ? 2 : 1;
     const importantTerms = Object.entries(termFrequency)
       .filter(([_, count]) => count >= minCount)
       .sort((a, b) => b[1] - a[1])
       .map(([term]) => term);
 
-    // Find sentences containing definitions or key information
     const definitionPatterns = [
       /\b(?:is|are|was|were)\s+(?:a|an|the)\s+/i,
       /\b(?:refers?\s+to|means?|defined?\s+as|known\s+as)\b/i,
@@ -1135,30 +2226,15 @@ Rules:
       /\b(?:because|therefore|thus|hence|consequently|as\s+a\s+result)\b/i,
     ];
 
-    // Score each sentence for flashcard potential
     const scoredSentences = sentences.map((sent, idx) => {
       let score = 0;
-
-      // Bonus for definition-like patterns
-      definitionPatterns.forEach(pat => {
-        if (pat.test(sent)) score += 2;
-      });
-
-      // Bonus for containing important terms
-      importantTerms.slice(0, 20).forEach(term => {
-        if (sent.toLowerCase().includes(term)) score += 1;
-      });
-
-      // Prefer medium-length sentences
+      definitionPatterns.forEach(pat => { if (pat.test(sent)) score += 2; });
+      importantTerms.slice(0, 20).forEach(term => { if (sent.toLowerCase().includes(term)) score += 1; });
       if (sent.length > 40 && sent.length < 250) score += 1;
-
-      // Bonus for sentences with numbers/data
       if (/\d+/.test(sent)) score += 1;
-
       return { sentence: sent, score, index: idx };
     });
 
-    // Sort by score, take the best
     scoredSentences.sort((a, b) => b.score - a.score);
 
     const selectedSentences = [];
@@ -1166,7 +2242,6 @@ Rules:
 
     for (const item of scoredSentences) {
       if (selectedSentences.length >= numCards) break;
-      // Avoid adjacent sentences to get diverse topics
       if (usedIndices.has(item.index - 1) || usedIndices.has(item.index + 1)) {
         if (selectedSentences.length < numCards - 2) continue;
       }
@@ -1174,7 +2249,6 @@ Rules:
       usedIndices.add(item.index);
     }
 
-    // If we still need more, fill from remaining
     if (selectedSentences.length < numCards) {
       for (const item of scoredSentences) {
         if (selectedSentences.length >= numCards) break;
@@ -1185,81 +2259,45 @@ Rules:
       }
     }
 
-    // Generate questions from selected sentences
-    const flashcards = selectedSentences.map((item, i) => {
+    return selectedSentences.map((item, i) => {
       const sent = item.sentence;
       const { question, answer } = createQA(sent, importantTerms);
       const diff = assignDifficulty(difficulty, i, selectedSentences.length);
       const topic = extractTopic(sent, importantTerms);
-
       return { question, answer, difficulty: diff, topic };
     });
-
-    return flashcards;
   }
 
   function createQA(sentence, importantTerms) {
     const sent = sentence.replace(/\s+/g, ' ').trim();
-
-    // Pattern 1: "X is/are Y" → "What is X?"
     const isMatch = sent.match(/^(.{5,60}?)\s+(?:is|are|was|were)\s+(.+)/i);
     if (isMatch) {
       const subject = isMatch[1].replace(/^(the|a|an)\s+/i, '').trim();
-      return {
-        question: `What is ${subject.toLowerCase().endsWith('s') ? subject : subject}?`,
-        answer: sent
-      };
+      return { question: `What is ${subject}?`, answer: sent };
     }
-
-    // Pattern 2: "X causes/leads to Y" → "What does X cause?"
     const causeMatch = sent.match(/^(.{5,60}?)\s+(?:causes?|leads?\s+to|results?\s+in)\s+(.+)/i);
     if (causeMatch) {
-      return {
-        question: `What does ${causeMatch[1].replace(/^(the|a|an)\s+/i, '')} cause or lead to?`,
-        answer: sent
-      };
+      return { question: `What does ${causeMatch[1].replace(/^(the|a|an)\s+/i, '')} cause or lead to?`, answer: sent };
     }
-
-    // Pattern 3: Contains "because/therefore" → "Why" question
     const becauseMatch = sent.match(/(.+?)\s+(?:because|since|due\s+to)\s+(.+)/i);
     if (becauseMatch) {
-      return {
-        question: `Why ${becauseMatch[1].replace(/^(the|a|an)\s+/i, '').toLowerCase().replace(/\.$/, '')}?`,
-        answer: sent
-      };
+      return { question: `Why ${becauseMatch[1].replace(/^(the|a|an)\s+/i, '').toLowerCase().replace(/\.$/, '')}?`, answer: sent };
     }
-
-    // Pattern 4: Contains important term → "Explain/Describe" question
     for (const term of importantTerms.slice(0, 10)) {
       if (sent.toLowerCase().includes(term) && term.length > 4) {
         const capitalTerm = term.charAt(0).toUpperCase() + term.slice(1);
-        const questionTypes = [
-          `What is ${capitalTerm}?`,
-          `Explain the concept of ${capitalTerm}.`,
-          `Describe ${capitalTerm}.`,
-          `What role does ${capitalTerm} play?`,
-        ];
-        return {
-          question: questionTypes[Math.floor(Math.random() * questionTypes.length)],
-          answer: sent
-        };
+        const qTypes = [`What is ${capitalTerm}?`, `Explain the concept of ${capitalTerm}.`, `Describe ${capitalTerm}.`, `What role does ${capitalTerm} play?`];
+        return { question: qTypes[Math.floor(Math.random() * qTypes.length)], answer: sent };
       }
     }
-
-    // Pattern 5: Fallback — turn statement into a question
-    // Extract the first noun phrase as the subject
     const words = sent.split(/\s+/).slice(0, 8).join(' ');
-    return {
-      question: `What can you tell about: "${words}..."?`,
-      answer: sent
-    };
+    return { question: `What can you tell about: "${words}..."?`, answer: sent };
   }
 
   function assignDifficulty(setting, index, total) {
     if (setting === 'easy') return 'easy';
     if (setting === 'medium') return 'medium';
     if (setting === 'hard') return 'hard';
-    // mixed — distribute
     const third = total / 3;
     if (index < third) return 'easy';
     if (index < third * 2) return 'medium';
@@ -1267,18 +2305,16 @@ Rules:
   }
 
   function extractTopic(sentence, importantTerms) {
-    // Find the most relevant important term in the sentence
     for (const term of importantTerms.slice(0, 15)) {
       if (sentence.toLowerCase().includes(term) && term.length > 4) {
-        // Capitalize each word
         return term.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
       }
     }
-    // Fallback: use first few meaningful words
     const words = sentence.split(/\s+/).filter(w => w.length > 3).slice(0, 3);
     return words.map(w => w.replace(/[^a-zA-Z]/g, '')).filter(Boolean).join(' ').substring(0, 25) || 'General';
   }
 
+  // ─── Display & Navigation ────────────────────────────────────────────────
   function displayCards() {
     currentIndex = 0;
     document.getElementById('results').classList.remove('hidden');
@@ -1334,7 +2370,7 @@ Rules:
     });
   }
 
-  // --- Quiz Mode Functions ---
+  // ─── Quiz Mode ───────────────────────────────────────────────────────────
   function switchMode(mode) {
     const tabs = document.querySelectorAll('.mode-tab');
     tabs[0].classList.toggle('active', mode === 'study');
@@ -1360,7 +2396,6 @@ Rules:
 
   function startQuiz() {
     quizOrder = cards.map((_, i) => i);
-    // Shuffle
     for (let i = quizOrder.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [quizOrder[i], quizOrder[j]] = [quizOrder[j], quizOrder[i]];
@@ -1388,7 +2423,6 @@ Rules:
     diffEl.style.display = 'inline-block';
     diffEl.style.marginTop = '0.5rem';
 
-    // Update progress
     const total = cards.length;
     const answered = quizAnswers.length;
     document.getElementById('quizProgressLabel').textContent = `Question ${quizCurrentIndex + 1} of ${total}`;
@@ -1396,7 +2430,6 @@ Rules:
     document.getElementById('quizScoreLabel').textContent = `Score: ${correctSoFar} / ${answered}`;
     document.getElementById('quizProgressFill').style.width = `${(quizCurrentIndex / total) * 100}%`;
 
-    // Reset input area
     document.getElementById('quizAnswerInput').value = '';
     document.getElementById('quizAnswerInput').disabled = false;
     document.getElementById('quizSubmitBtn').disabled = false;
@@ -1408,7 +2441,6 @@ Rules:
     quizSubmitted = false;
     quizGraded = false;
 
-    // Focus input
     setTimeout(() => document.getElementById('quizAnswerInput').focus(), 100);
   }
 
@@ -1421,17 +2453,14 @@ Rules:
     const card = cards[cardIdx];
     const correctAnswer = card.answer;
 
-    // Disable input
     document.getElementById('quizAnswerInput').disabled = true;
     document.getElementById('quizSubmitBtn').disabled = true;
     document.getElementById('quizSubmitBtn').textContent = 'Evaluating...';
 
-    // Show feedback
     document.getElementById('quizUserAnswerText').textContent = userAnswer || '(no answer)';
     document.getElementById('quizCorrectAnswerText').textContent = correctAnswer;
     document.getElementById('quizFeedback').classList.remove('hidden');
 
-    // Reset UI
     document.getElementById('aiVerdict').classList.add('hidden');
     document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('selected'));
     document.getElementById('quizNextBtn').classList.add('hidden');
@@ -1443,18 +2472,15 @@ Rules:
       gradeAnswer(false);
       showAIVerdictManual(false, 'No answer provided.');
     } else if (WORKER_URL || apiKey) {
-      // AI-powered evaluation
       try {
         const verdict = await evaluateWithAI(apiKey, card.question, correctAnswer, userAnswer);
         showAIVerdict(verdict);
         gradeAnswer(verdict.correct);
       } catch (err) {
         console.error('AI eval failed:', err);
-        // Fall back to self-grading on API error
         showSelfGrade();
       }
     } else {
-      // No API key — self-grade fallback
       showSelfGrade();
     }
 
@@ -1529,7 +2555,6 @@ Rules:
     }
     explanation.textContent = verdict.explanation || '';
 
-    // Hide self-grade since AI graded
     document.getElementById('selfGradeLabel').classList.add('hidden');
     document.getElementById('selfGrade').classList.add('hidden');
   }
@@ -1553,17 +2578,14 @@ Rules:
 
     quizAnswers.push({ userAnswer, correct, cardIndex: cardIdx });
 
-    // Highlight selected grade button
     const btns = document.querySelectorAll('.grade-btn');
     btns.forEach(b => b.classList.remove('selected'));
     if (correct) btns[0].classList.add('selected');
     else btns[1].classList.add('selected');
 
-    // Update score display
     const correctCount = quizAnswers.filter(a => a.correct).length;
     document.getElementById('quizScoreLabel').textContent = `Score: ${correctCount} / ${quizAnswers.length}`;
 
-    // Show next button
     const nextBtn = document.getElementById('quizNextBtn');
     nextBtn.classList.remove('hidden');
     if (quizCurrentIndex >= cards.length - 1) {
@@ -1597,7 +2619,6 @@ Rules:
     fill.style.width = pct + '%';
     fill.className = 'quiz-score-fill ' + (pct >= 80 ? 'good' : pct >= 50 ? 'ok' : 'poor');
 
-    // Build review list
     const list = document.getElementById('quizReviewList');
     list.innerHTML = '';
     quizAnswers.forEach((a, i) => {
@@ -1616,14 +2637,7 @@ Rules:
       list.appendChild(item);
     });
 
-    // Update progress bar to 100%
     document.getElementById('quizProgressFill').style.width = '100%';
-  }
-
-  function escHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
   }
 
   function retakeQuiz() {
@@ -1635,9 +2649,9 @@ Rules:
   // Keyboard navigation
   document.addEventListener('keydown', e => {
     if (document.getElementById('results').classList.contains('hidden')) return;
+    if (currentPage !== 'generate') return;
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
 
-    // Quiz mode keyboard
     if (quizActive && e.target.tagName === 'TEXTAREA') {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -1648,11 +2662,25 @@ Rules:
 
     if (e.target.tagName === 'TEXTAREA') return;
 
-    // Study mode keyboard
     if (!quizActive) {
       if (e.key === 'ArrowLeft') prevCard();
       else if (e.key === 'ArrowRight') nextCard();
       else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+    }
+  });
+
+  // Review page keyboard
+  document.addEventListener('keydown', e => {
+    if (currentPage !== 'review') return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (!reviewFlipped) {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipReviewCard(); }
+    } else {
+      if (e.key === '1') rateSRS(0);
+      else if (e.key === '2') rateSRS(3);
+      else if (e.key === '3') rateSRS(4);
+      else if (e.key === '4') rateSRS(5);
     }
   });
 
@@ -1689,13 +2717,16 @@ Rules:
     URL.revokeObjectURL(url);
   }
 
-  // Show appropriate UI based on whether WORKER_URL is configured
+  // ─── Init ────────────────────────────────────────────────────────────────
   if (WORKER_URL) {
     document.getElementById('workerModeUI').style.display = 'block';
     document.getElementById('apiKeyModeUI').style.display = 'none';
     document.getElementById('aiSectionBadge').textContent = '(AI Enabled)';
     document.getElementById('aiSectionBadge').style.color = 'var(--success)';
   }
+
+  updateDueBadge();
+  checkForSharedDeck();
 </script>
 </body>
 </html>
