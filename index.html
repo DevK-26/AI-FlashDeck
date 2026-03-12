@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Flashcard Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root {
+    --bg-deep: #1a1a1a;
+    --bg-card: #242424;
+    --bg-card-hover: #2c2c2c;
+    --bg-input: #1e1e1e;
+    --cream: #f5efe6;
+    --cream-soft: #e8dfd3;
+    --amber: #d4a853;
+    --amber-light: #e8c574;
+    --amber-dim: #a37e30;
+    --text-primary: #f5efe6;
+    --text-secondary: #b5aa9a;
+    --text-muted: #7a7168;
+    --border: #3a3530;
+    --border-hover: #504840;
+    --success: #6db87a;
+    --error: #d45d5d;
+    --radius: 12px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.3);
+  }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* --- Header --- */
+  header {
+    text-align: center;
+    padding: 3rem 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: -0.5px;
+  }
+  header h1 span { color: var(--amber); }
+  header p {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    margin-top: 0.5rem;
+    font-weight: 300;
+  }
+
+  /* --- Layout --- */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* --- Sections --- */
+  .section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section-title .icon { color: var(--amber); font-size: 1.1rem; }
+
+  /* --- Form elements --- */
+  label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+  }
+
+  textarea, input[type="text"], input[type="password"] {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+    transition: border-color 0.2s;
+  }
+  textarea:focus, input:focus {
+    outline: none;
+    border-color: var(--amber);
+  }
+  textarea {
+    min-height: 160px;
+    resize: vertical;
+  }
+  textarea::placeholder, input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .row > div { flex: 1; }
+
+  select {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237a7168' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    cursor: pointer;
+  }
+  select:focus { outline: none; border-color: var(--amber); }
+
+  /* --- Generate Button --- */
+  .generate-btn {
+    width: 100%;
+    padding: 1rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--bg-deep);
+    background: linear-gradient(135deg, var(--amber), var(--amber-light));
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s;
+    letter-spacing: 0.3px;
+  }
+  .generate-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(212,168,83,0.35);
+  }
+  .generate-btn:active { transform: translateY(0); }
+  .generate-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* --- Status --- */
+  .status {
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    display: none;
+  }
+  .status.visible { display: block; }
+  .status.error { color: var(--error); }
+
+  .spinner {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-top-color: var(--amber);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* --- Cards area --- */
+  .cards-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .cards-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+  .card-counter {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+  .cards-nav {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .nav-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    width: 40px; height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+  .nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* --- Flashcard --- */
+  .card-viewport {
+    perspective: 1000px;
+    height: 300px;
+    margin-bottom: 1rem;
+  }
+  .flashcard {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 2.5rem;
+    text-align: center;
+  }
+  .card-front {
+    background: linear-gradient(145deg, #2a2520, #1e1b18);
+    border-color: var(--amber-dim);
+  }
+  .card-back {
+    background: linear-gradient(145deg, #1e2520, #182018);
+    border-color: var(--success);
+    transform: rotateY(180deg);
+  }
+
+  .card-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    position: absolute;
+    top: 1rem;
+    left: 1.5rem;
+  }
+  .card-front .card-label { color: var(--amber-dim); }
+  .card-back .card-label { color: #4a8a56; }
+
+  .card-topic {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 0.7rem;
+    background: rgba(212,168,83,0.15);
+    color: var(--amber);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+  }
+
+  .card-text {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--cream);
+  }
+  .card-front .card-text {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 1.25rem;
+  }
+
+  .card-difficulty {
+    position: absolute;
+    bottom: 1rem;
+    right: 1.5rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+  }
+  .diff-easy { background: rgba(109,184,122,0.15); color: var(--success); }
+  .diff-medium { background: rgba(212,168,83,0.15); color: var(--amber); }
+  .diff-hard { background: rgba(212,93,93,0.15); color: var(--error); }
+
+  .flip-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  /* --- Progress dots --- */
+  .progress-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .dot.active { background: var(--amber); transform: scale(1.3); }
+  .dot:hover { background: var(--amber-dim); }
+
+  /* --- Export --- */
+  .export-bar {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    justify-content: center;
+  }
+  .export-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .export-btn:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  /* --- Mode Toggle --- */
+  .mode-toggle {
+    display: flex;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    width: fit-content;
+  }
+  .mode-tab {
+    padding: 0.6rem 1.5rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .mode-tab:hover { color: var(--cream); }
+  .mode-tab.active {
+    background: var(--amber);
+    color: var(--bg-deep);
+    font-weight: 600;
+  }
+
+  /* --- Quiz Mode --- */
+  .quiz-panel {
+    background: linear-gradient(145deg, #2a2520, #1e1b18);
+    border: 1px solid var(--amber-dim);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-bottom: 1rem;
+  }
+  .quiz-question-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--amber-dim);
+    margin-bottom: 0.5rem;
+  }
+  .quiz-topic-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .quiz-question-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--cream);
+    line-height: 1.7;
+    text-align: center;
+    padding: 1rem 0;
+  }
+  .quiz-input-area {
+    margin-top: 1rem;
+  }
+  .quiz-input-area textarea {
+    min-height: 80px;
+    margin-bottom: 0.75rem;
+  }
+  .quiz-submit-btn {
+    width: 100%;
+    padding: 0.75rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--bg-deep);
+    background: linear-gradient(135deg, var(--amber), var(--amber-light));
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .quiz-submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(212,168,83,0.3);
+  }
+  .quiz-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* --- Quiz Feedback --- */
+  .quiz-feedback {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-top: 1rem;
+  }
+  .feedback-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.4rem;
+  }
+  .feedback-label.your-answer { color: var(--amber); }
+  .feedback-label.correct-answer { color: var(--success); }
+  .feedback-text {
+    font-size: 0.95rem;
+    color: var(--cream);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  .feedback-text:last-child { margin-bottom: 0; }
+
+  .ai-verdict {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+  }
+  .ai-verdict.correct {
+    background: rgba(109,184,122,0.12);
+    border: 1px solid rgba(109,184,122,0.3);
+  }
+  .ai-verdict.incorrect {
+    background: rgba(212,93,93,0.12);
+    border: 1px solid rgba(212,93,93,0.3);
+  }
+  .ai-verdict.partial {
+    background: rgba(212,168,83,0.12);
+    border: 1px solid rgba(212,168,83,0.3);
+  }
+  .verdict-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .verdict-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .verdict-text strong {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+  }
+  .ai-verdict.correct .verdict-text strong { color: var(--success); }
+  .ai-verdict.incorrect .verdict-text strong { color: var(--error); }
+  .ai-verdict.partial .verdict-text strong { color: var(--amber); }
+  .verdict-text span { color: var(--text-secondary); font-size: 0.85rem; }
+
+  .self-grade-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .self-grade {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .grade-btn {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 2px solid;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+  }
+  .grade-btn.correct {
+    border-color: var(--success);
+    color: var(--success);
+  }
+  .grade-btn.correct:hover {
+    background: var(--success);
+    color: var(--bg-deep);
+  }
+  .grade-btn.incorrect {
+    border-color: var(--error);
+    color: var(--error);
+  }
+  .grade-btn.incorrect:hover {
+    background: var(--error);
+    color: var(--bg-deep);
+  }
+  .grade-btn.selected {
+    color: var(--bg-deep);
+  }
+  .grade-btn.correct.selected { background: var(--success); }
+  .grade-btn.incorrect.selected { background: var(--error); }
+
+  .quiz-next-btn {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--cream);
+    background: var(--bg-card);
+    border: 1px solid var(--amber);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .quiz-next-btn:hover {
+    background: var(--amber-dim);
+  }
+
+  /* --- Quiz Progress --- */
+  .quiz-progress {
+    margin-bottom: 1rem;
+  }
+  .quiz-progress-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  .quiz-progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .quiz-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--amber), var(--amber-light));
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  /* --- Quiz Results --- */
+  .quiz-results {
+    text-align: center;
+    padding: 2rem 0;
+  }
+  .quiz-score-big {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--amber);
+    line-height: 1.2;
+  }
+  .quiz-score-label {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+  }
+  .quiz-score-bar {
+    max-width: 300px;
+    margin: 1.5rem auto;
+    height: 10px;
+    background: var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .quiz-score-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.6s ease;
+  }
+  .quiz-score-fill.good { background: var(--success); }
+  .quiz-score-fill.ok { background: var(--amber); }
+  .quiz-score-fill.poor { background: var(--error); }
+
+  .quiz-review {
+    text-align: left;
+    margin-top: 2rem;
+  }
+  .quiz-review h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--cream);
+  }
+  .review-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .review-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .review-q {
+    font-weight: 600;
+    color: var(--cream);
+    font-size: 0.95rem;
+    flex: 1;
+  }
+  .review-badge {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    margin-left: 1rem;
+    white-space: nowrap;
+  }
+  .review-badge.correct { background: rgba(109,184,122,0.15); color: var(--success); }
+  .review-badge.incorrect { background: rgba(212,93,93,0.15); color: var(--error); }
+  .review-answers {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .review-answers span { color: var(--cream); }
+
+  .quiz-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    justify-content: center;
+  }
+  .quiz-action-btn {
+    padding: 0.7rem 1.5rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .quiz-action-btn.primary {
+    background: linear-gradient(135deg, var(--amber), var(--amber-light));
+    color: var(--bg-deep);
+    border: none;
+  }
+  .quiz-action-btn.primary:hover { box-shadow: 0 4px 16px rgba(212,168,83,0.3); }
+  .quiz-action-btn.secondary {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .quiz-action-btn.secondary:hover { border-color: var(--amber); color: var(--amber); }
+
+  /* --- Hidden --- */
+  .hidden { display: none !important; }
+
+  /* --- Responsive --- */
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.8rem; }
+    .row { flex-direction: column; gap: 0.75rem; }
+    .api-row { flex-direction: column; }
+    .card-viewport { height: 260px; }
+    .card-text { font-size: 1rem; }
+    .card-front .card-text { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AI Flashcard <span>Generator</span></h1>
+  <p>Paste any text and let AI create study flashcards for you</p>
+</header>
+
+<div class="container">
+  <!-- Input Section -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#9998;</span> Source Material</div>
+    <textarea id="sourceText" placeholder="Paste your study material here — lecture notes, textbook passages, articles, or any text you want to learn from..."></textarea>
+    <div class="row">
+      <div>
+        <label for="numCards">Number of Cards</label>
+        <select id="numCards">
+          <option value="5">5 cards</option>
+          <option value="8">8 cards</option>
+          <option value="10" selected>10 cards</option>
+          <option value="15">15 cards</option>
+          <option value="20">20 cards</option>
+        </select>
+      </div>
+      <div>
+        <label for="difficulty">Difficulty</label>
+        <select id="difficulty">
+          <option value="easy">Easy — Definitions & Facts</option>
+          <option value="medium" selected>Medium — Concepts & Relationships</option>
+          <option value="hard">Hard — Application & Analysis</option>
+          <option value="mixed">Mixed</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Configuration Section -->
+  <div class="section" id="aiSection">
+    <div class="section-title"><span class="icon">&#128273;</span> AI Enhancement <span style="font-size:0.75rem; font-family:'Source Serif 4',serif; font-weight:400; color:var(--text-muted); margin-left:0.5rem;" id="aiSectionBadge">(Optional)</span></div>
+
+    <!-- Shown when WORKER_URL is configured -->
+    <div id="workerModeUI" style="display:none">
+      <p style="font-size:1rem; color:var(--success); font-weight:600; letter-spacing:0.01em;">&#10024; Create your flashcards with AI — instantly, for free.</p>
+      <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.5rem;">Paste any text, notes, or topic and let AI turn it into smart study cards. No account or API key needed.</p>
+    </div>
+
+    <!-- Shown in default mode (no worker configured) -->
+    <div id="apiKeyModeUI">
+      <p style="font-size:0.9rem; color:var(--success); margin-bottom:0.75rem; font-weight:500;">
+        &#10003; This app is free to use! Flashcards are generated locally from your text.
+      </p>
+      <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.75rem;">
+        Want even better results? Add a Claude API key for AI-powered generation and smart quiz grading.
+      </p>
+      <div>
+        <label for="apiKey">Anthropic API Key (optional)</label>
+        <input type="password" id="apiKey" placeholder="sk-ant-api03-... (leave blank for free mode)">
+    </div>
+    <details style="margin-top:0.75rem; font-size:0.85rem; color:var(--text-secondary);">
+      <summary style="cursor:pointer; color:var(--amber); font-weight:500;">How do I get an API key?</summary>
+      <ol style="margin:0.75rem 0 0 1.25rem; line-height:1.8; color:var(--text-secondary);">
+        <li>Go to <a href="https://console.anthropic.com" target="_blank" rel="noopener" style="color:var(--amber-light); text-decoration:underline;">console.anthropic.com</a> and sign up or log in</li>
+        <li>Navigate to <strong style="color:var(--cream);">Settings &rarr; API Keys</strong> in the sidebar</li>
+        <li>Click <strong style="color:var(--cream);">Create Key</strong> and give it a name</li>
+        <li>Copy the key (starts with <code style="background:var(--bg-input); padding:0.1rem 0.4rem; border-radius:4px; font-size:0.8rem;">sk-ant-api03-...</code>) and paste it above</li>
+      </ol>
+      <p style="margin-top:0.5rem; font-size:0.8rem; color:var(--text-muted);">
+        New accounts get free credits to start. This app uses Claude Sonnet which costs roughly $0.01 per set of flashcards generated.
+      </p>
+    </details>
+    </div><!-- end #apiKeyModeUI -->
+  </div>
+
+  <!-- Generate -->
+  <button class="generate-btn" id="generateBtn" onclick="generate()">Generate Flashcards</button>
+
+  <!-- Status -->
+  <div class="status" id="status"></div>
+
+  <!-- Results -->
+  <div id="results" class="hidden">
+    <div class="section" style="background:transparent; border:none; padding:0;">
+      <!-- Mode Toggle -->
+      <div class="mode-toggle" id="modeToggle">
+        <button class="mode-tab active" onclick="switchMode('study')">Study</button>
+        <button class="mode-tab" onclick="switchMode('quiz')">Quiz</button>
+      </div>
+
+      <!-- Study Mode -->
+      <div id="studyMode">
+        <div class="cards-header">
+          <h2>Your Flashcards</h2>
+          <div style="display:flex; align-items:center; gap:1rem;">
+            <span class="card-counter" id="cardCounter">1 / 10</span>
+            <div class="cards-nav">
+              <button class="nav-btn" id="prevBtn" onclick="prevCard()">&#8592;</button>
+              <button class="nav-btn" id="nextBtn" onclick="nextCard()">&#8594;</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-viewport" onclick="flipCard()">
+          <div class="flashcard" id="flashcard">
+            <div class="card-face card-front">
+              <span class="card-label">Question</span>
+              <span class="card-topic" id="cardTopic"></span>
+              <div class="card-text" id="cardQuestion"></div>
+              <span class="card-difficulty" id="cardDiffFront"></span>
+            </div>
+            <div class="card-face card-back">
+              <span class="card-label">Answer</span>
+              <div class="card-text" id="cardAnswer"></div>
+              <span class="card-difficulty" id="cardDiffBack"></span>
+            </div>
+          </div>
+        </div>
+
+        <p class="flip-hint">Click the card to flip it</p>
+
+        <div class="progress-dots" id="progressDots"></div>
+
+        <div class="export-bar" id="exportBar">
+          <button class="export-btn" onclick="exportJSON()">Export JSON</button>
+          <button class="export-btn" onclick="exportCSV()">Export CSV</button>
+          <button class="export-btn" onclick="exportText()">Export Text</button>
+        </div>
+      </div>
+
+      <!-- Quiz Mode -->
+      <div id="quizMode" class="hidden">
+        <!-- Quiz Progress -->
+        <div class="quiz-progress">
+          <div class="quiz-progress-text">
+            <span id="quizProgressLabel">Question 1 of 10</span>
+            <span id="quizScoreLabel">Score: 0 / 0</span>
+          </div>
+          <div class="quiz-progress-bar">
+            <div class="quiz-progress-fill" id="quizProgressFill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Quiz Question -->
+        <div class="quiz-panel" id="quizPanel">
+          <div class="quiz-topic-row">
+            <span class="quiz-question-label">Question</span>
+            <span class="card-topic" id="quizTopic"></span>
+          </div>
+          <div class="quiz-question-text" id="quizQuestionText"></div>
+          <span class="card-difficulty" id="quizDifficulty" style="position:static; display:inline-block; margin-top:0.5rem;"></span>
+        </div>
+
+        <!-- Answer Input -->
+        <div class="quiz-input-area" id="quizInputArea">
+          <textarea id="quizAnswerInput" placeholder="Type your answer here..."></textarea>
+          <button class="quiz-submit-btn" id="quizSubmitBtn" onclick="submitQuizAnswer()">Submit Answer</button>
+        </div>
+
+        <!-- Feedback (shown after submit) -->
+        <div class="quiz-feedback hidden" id="quizFeedback">
+          <!-- AI Verdict (shown when API key available) -->
+          <div class="ai-verdict hidden" id="aiVerdict">
+            <span class="verdict-icon" id="verdictIcon"></span>
+            <div class="verdict-text">
+              <strong id="verdictLabel"></strong>
+              <span id="verdictExplanation"></span>
+            </div>
+          </div>
+          <div class="feedback-label your-answer">Your Answer</div>
+          <div class="feedback-text" id="quizUserAnswerText"></div>
+          <div class="feedback-label correct-answer">Correct Answer</div>
+          <div class="feedback-text" id="quizCorrectAnswerText"></div>
+          <!-- Self-grade (fallback for demo mode) -->
+          <div class="self-grade-label hidden" id="selfGradeLabel">How did you do?</div>
+          <div class="self-grade hidden" id="selfGrade">
+            <button class="grade-btn correct" onclick="gradeAnswer(true)">I Got It Right</button>
+            <button class="grade-btn incorrect" onclick="gradeAnswer(false)">I Got It Wrong</button>
+          </div>
+        </div>
+
+        <!-- Next button (shown after grading) -->
+        <button class="quiz-next-btn hidden" id="quizNextBtn" onclick="nextQuizQuestion()">Next Question</button>
+      </div>
+
+      <!-- Quiz Results -->
+      <div id="quizResults" class="hidden">
+        <div class="quiz-results">
+          <div class="quiz-score-big" id="quizScoreBig">0%</div>
+          <div class="quiz-score-label" id="quizScoreDetail">0 of 0 correct</div>
+          <div class="quiz-score-bar">
+            <div class="quiz-score-fill" id="quizScoreFill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="quiz-review" id="quizReview">
+          <h3>Review</h3>
+          <div id="quizReviewList"></div>
+        </div>
+
+        <div class="quiz-actions">
+          <button class="quiz-action-btn primary" onclick="retakeQuiz()">Retake Quiz</button>
+          <button class="quiz-action-btn secondary" onclick="switchMode('study')">Back to Study</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── Cloudflare Worker URL ────────────────────────────────────────────────
+  // After deploying worker.js, paste your *.workers.dev URL here so all users
+  // get AI-powered generation for free with no API key required.
+  // Leave empty ('') to fall back to the API key field or local generation.
+  const WORKER_URL = 'https://flashcard-generator.khushiflashcard.workers.dev';
+  // ─────────────────────────────────────────────────────────────────────────
+
+  let cards = [];
+  let currentIndex = 0;
+
+  // Quiz state
+  let quizActive = false;
+  let quizOrder = [];
+  let quizCurrentIndex = 0;
+  let quizAnswers = []; // { userAnswer, correct, cardIndex }
+  let quizSubmitted = false;
+  let quizGraded = false;
+
+  const SYSTEM_PROMPT = `You are a flashcard generation expert. When given any text, extract the most important concepts and generate study flashcards.
+STRICT OUTPUT FORMAT — return ONLY a raw JSON array. No preamble, no explanation, no markdown code blocks, no backticks. Just the JSON array itself.
+Format:
+[
+  {
+    "question": "Clear, specific question testing one concept",
+    "answer": "Concise, accurate answer (1-3 sentences max)",
+    "difficulty": "easy | medium | hard",
+    "topic": "Short topic label (2-4 words)"
+  }
+]
+Rules:
+- Generate exactly {NUM} flashcards
+- Difficulty {DIFF}: easy=definitions/facts, medium=concepts/relationships, hard=application/analysis
+- Questions must be standalone (no 'in the above text' references)
+- Answers must be self-contained and accurate
+- Cover diverse aspects of the text, not just the first paragraph
+- For hard cards, ask 'why', 'how', or 'what would happen if' questions
+- topic field should categorize the card (e.g. "Neural Networks", "Cell Biology")`;
+
+  function showStatus(msg, isError = false) {
+    const el = document.getElementById('status');
+    el.innerHTML = msg;
+    el.className = 'status visible' + (isError ? ' error' : '');
+  }
+  function hideStatus() {
+    document.getElementById('status').className = 'status';
+  }
+
+  async function generate() {
+    const text = document.getElementById('sourceText').value.trim();
+    const numCards = parseInt(document.getElementById('numCards').value);
+    const difficulty = document.getElementById('difficulty').value;
+    const apiKey = document.getElementById('apiKey').value.trim();
+
+    if (!text) {
+      showStatus('Please paste some source material to generate flashcards from.', true);
+      return;
+    }
+
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = true;
+
+    if (WORKER_URL || apiKey) {
+      // AI-powered generation (via Cloudflare Worker or direct API key)
+      showStatus('<span class="spinner"></span> Generating AI-powered flashcards...');
+
+      const diffLabel = difficulty === 'mixed' ? 'mixed (include easy, medium, and hard)' : difficulty;
+      const systemPrompt = SYSTEM_PROMPT
+        .replace('{NUM}', numCards)
+        .replace('{DIFF}', diffLabel);
+
+      try {
+        let response;
+        if (WORKER_URL) {
+          response = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mode: 'generate', text, numCards, difficulty })
+          });
+        } else {
+          response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': apiKey,
+              'anthropic-version': '2023-06-01',
+              'anthropic-dangerous-direct-browser-access': 'true'
+            },
+            body: JSON.stringify({
+              model: 'claude-sonnet-4-20250514',
+              max_tokens: 4096,
+              system: systemPrompt,
+              messages: [
+                { role: 'user', content: `Generate ${numCards} flashcards from the following text:\n\n${text}` }
+              ]
+            })
+          });
+        }
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err.error?.message || err.error || `Request returned ${response.status}`);
+        }
+
+        const data = await response.json();
+        const content = data.content[0].text.trim();
+
+        let jsonStr = content;
+        const fenceMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
+        if (fenceMatch) jsonStr = fenceMatch[1].trim();
+
+        cards = JSON.parse(jsonStr);
+
+        if (!Array.isArray(cards) || cards.length === 0) {
+          throw new Error('API returned invalid flashcard data.');
+        }
+
+        hideStatus();
+        displayCards();
+      } catch (err) {
+        showStatus('Error: ' + err.message, true);
+      } finally {
+        btn.disabled = false;
+      }
+    } else {
+      // Free local generation — no API key needed
+      showStatus('<span class="spinner"></span> Generating flashcards from your text...');
+
+      try {
+        // Small delay so spinner shows
+        await new Promise(r => setTimeout(r, 300));
+        cards = generateLocalFlashcards(text, numCards, difficulty);
+
+        if (cards.length === 0) {
+          throw new Error('Could not extract enough content. Please paste more text (at least a few paragraphs).');
+        }
+
+        hideStatus();
+        displayCards();
+      } catch (err) {
+        showStatus('Error: ' + err.message, true);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+  }
+
+  // --- Local Flashcard Generation (Free, no API) ---
+  const STOP_WORDS = new Set(['this','that','with','from','have','been','were','they','their','them','will','would','could','should','about','which','these','those','other','some','what','when','where','there','than','then','also','more','most','into','over','such','only','very','just','like','after','before','between','through','under','each','every','both','many','much','well','back','even','still','here','does','made','make','being','because','while','during','without','within','along','since','until','among','upon','often','might','based','using','used','called','known','found','given','shown','example','however','therefore','although','including','according','following','different','important','another','several','possible','available','provide','provides','specific','particularly','especially','significant','various','certain','general','common','similar','related','particular','involved','result','results','process','system','include','includes','first','second','third','number','part','case','point','group','fact','area','level','form','type','kind','sort','name','word','need','hand','high','long','small','large','good','great','right','left','same','able','next','last','come','came','take','took','give','gave','keep','kept','help','turn','begin','began','seem','show','think','thought','tell','told','play','move','live','believe','hold','bring','happen','write','wrote','stand','lose','lost','mean','meant','read','learn','change','lead','understand','watch','follow','stop','create','speak','allow','grow','open','walk','carry','talk','appear','produce','develop','raise','close','present','receive','remember','consider','serve','expect','remain','suggest','contain','become','became','leave','call','reach','continue','support','hold','describe','note','notice','place','offer','order','rest','clear','field','complete','power','figure','paper','state','form','full','human','nature','social','science','world','earth','water','light','energy','force','space','matter','theory','time','year','years','people','work','life','part','place','world','school','state','family','student','group','country','problem','hand','home','question','information','power','government','company','number','night','point','program','city','business','study','study','book','room','mother','area','money','story','young','month','health','class','college','industry','market','plan','interest','members','course','things']);
+
+  function generateLocalFlashcards(text, numCards, difficulty) {
+    // Split into sentences — handles both punctuation-terminated sentences and newline-separated segments
+    let sentences = text
+      .replace(/\r\n/g, '\n')
+      .split(/(?<=[.!?])\s+|\n{2,}/)
+      .map(s => s.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim())
+      .filter(s => s.length >= 15);
+
+    // Fallback: if still too few, split on single newlines (handles bullet-point style text)
+    if (sentences.length < 2) {
+      sentences = text
+        .split(/\n/)
+        .map(s => s.replace(/^[\s\-•*●>]+/, '').trim())
+        .filter(s => s.length >= 15);
+    }
+
+    if (sentences.length < 2) {
+      throw new Error('Text is too short. Please paste more content (at least a few sentences).');
+    }
+
+    // Extract key terms: capitalized phrases, technical terms, quoted terms
+    const termFrequency = {};
+    const words = text.replace(/[^a-zA-Z\s]/g, ' ').split(/\s+/).filter(w => w.length > 3);
+    words.forEach(w => {
+      const lower = w.toLowerCase();
+      if (!STOP_WORDS.has(lower)) {
+        termFrequency[lower] = (termFrequency[lower] || 0) + 1;
+      }
+    });
+
+    // Get top terms — allow single occurrences for shorter texts
+    const minCount = Object.values(termFrequency).some(c => c >= 2) ? 2 : 1;
+    const importantTerms = Object.entries(termFrequency)
+      .filter(([_, count]) => count >= minCount)
+      .sort((a, b) => b[1] - a[1])
+      .map(([term]) => term);
+
+    // Find sentences containing definitions or key information
+    const definitionPatterns = [
+      /\b(?:is|are|was|were)\s+(?:a|an|the)\s+/i,
+      /\b(?:refers?\s+to|means?|defined?\s+as|known\s+as)\b/i,
+      /\b(?:consists?\s+of|composed?\s+of|made\s+up\s+of)\b/i,
+      /\b(?:causes?|leads?\s+to|results?\s+in|produces?)\b/i,
+      /\b(?:functions?\s+as|serves?\s+as|acts?\s+as|works?\s+by)\b/i,
+      /\b(?:includes?|involves?|requires?|contains?)\b/i,
+      /\b(?:important|essential|crucial|key|main|primary|significant)\b/i,
+      /\b(?:difference|contrast|compared?\s+to|unlike|whereas)\b/i,
+      /\b(?:example|instance|such\s+as|for\s+instance)\b/i,
+      /\b(?:because|therefore|thus|hence|consequently|as\s+a\s+result)\b/i,
+    ];
+
+    // Score each sentence for flashcard potential
+    const scoredSentences = sentences.map((sent, idx) => {
+      let score = 0;
+
+      // Bonus for definition-like patterns
+      definitionPatterns.forEach(pat => {
+        if (pat.test(sent)) score += 2;
+      });
+
+      // Bonus for containing important terms
+      importantTerms.slice(0, 20).forEach(term => {
+        if (sent.toLowerCase().includes(term)) score += 1;
+      });
+
+      // Prefer medium-length sentences
+      if (sent.length > 40 && sent.length < 250) score += 1;
+
+      // Bonus for sentences with numbers/data
+      if (/\d+/.test(sent)) score += 1;
+
+      return { sentence: sent, score, index: idx };
+    });
+
+    // Sort by score, take the best
+    scoredSentences.sort((a, b) => b.score - a.score);
+
+    const selectedSentences = [];
+    const usedIndices = new Set();
+
+    for (const item of scoredSentences) {
+      if (selectedSentences.length >= numCards) break;
+      // Avoid adjacent sentences to get diverse topics
+      if (usedIndices.has(item.index - 1) || usedIndices.has(item.index + 1)) {
+        if (selectedSentences.length < numCards - 2) continue;
+      }
+      selectedSentences.push(item);
+      usedIndices.add(item.index);
+    }
+
+    // If we still need more, fill from remaining
+    if (selectedSentences.length < numCards) {
+      for (const item of scoredSentences) {
+        if (selectedSentences.length >= numCards) break;
+        if (!usedIndices.has(item.index)) {
+          selectedSentences.push(item);
+          usedIndices.add(item.index);
+        }
+      }
+    }
+
+    // Generate questions from selected sentences
+    const flashcards = selectedSentences.map((item, i) => {
+      const sent = item.sentence;
+      const { question, answer } = createQA(sent, importantTerms);
+      const diff = assignDifficulty(difficulty, i, selectedSentences.length);
+      const topic = extractTopic(sent, importantTerms);
+
+      return { question, answer, difficulty: diff, topic };
+    });
+
+    return flashcards;
+  }
+
+  function createQA(sentence, importantTerms) {
+    const sent = sentence.replace(/\s+/g, ' ').trim();
+
+    // Pattern 1: "X is/are Y" → "What is X?"
+    const isMatch = sent.match(/^(.{5,60}?)\s+(?:is|are|was|were)\s+(.+)/i);
+    if (isMatch) {
+      const subject = isMatch[1].replace(/^(the|a|an)\s+/i, '').trim();
+      return {
+        question: `What is ${subject.toLowerCase().endsWith('s') ? subject : subject}?`,
+        answer: sent
+      };
+    }
+
+    // Pattern 2: "X causes/leads to Y" → "What does X cause?"
+    const causeMatch = sent.match(/^(.{5,60}?)\s+(?:causes?|leads?\s+to|results?\s+in)\s+(.+)/i);
+    if (causeMatch) {
+      return {
+        question: `What does ${causeMatch[1].replace(/^(the|a|an)\s+/i, '')} cause or lead to?`,
+        answer: sent
+      };
+    }
+
+    // Pattern 3: Contains "because/therefore" → "Why" question
+    const becauseMatch = sent.match(/(.+?)\s+(?:because|since|due\s+to)\s+(.+)/i);
+    if (becauseMatch) {
+      return {
+        question: `Why ${becauseMatch[1].replace(/^(the|a|an)\s+/i, '').toLowerCase().replace(/\.$/, '')}?`,
+        answer: sent
+      };
+    }
+
+    // Pattern 4: Contains important term → "Explain/Describe" question
+    for (const term of importantTerms.slice(0, 10)) {
+      if (sent.toLowerCase().includes(term) && term.length > 4) {
+        const capitalTerm = term.charAt(0).toUpperCase() + term.slice(1);
+        const questionTypes = [
+          `What is ${capitalTerm}?`,
+          `Explain the concept of ${capitalTerm}.`,
+          `Describe ${capitalTerm}.`,
+          `What role does ${capitalTerm} play?`,
+        ];
+        return {
+          question: questionTypes[Math.floor(Math.random() * questionTypes.length)],
+          answer: sent
+        };
+      }
+    }
+
+    // Pattern 5: Fallback — turn statement into a question
+    // Extract the first noun phrase as the subject
+    const words = sent.split(/\s+/).slice(0, 8).join(' ');
+    return {
+      question: `What can you tell about: "${words}..."?`,
+      answer: sent
+    };
+  }
+
+  function assignDifficulty(setting, index, total) {
+    if (setting === 'easy') return 'easy';
+    if (setting === 'medium') return 'medium';
+    if (setting === 'hard') return 'hard';
+    // mixed — distribute
+    const third = total / 3;
+    if (index < third) return 'easy';
+    if (index < third * 2) return 'medium';
+    return 'hard';
+  }
+
+  function extractTopic(sentence, importantTerms) {
+    // Find the most relevant important term in the sentence
+    for (const term of importantTerms.slice(0, 15)) {
+      if (sentence.toLowerCase().includes(term) && term.length > 4) {
+        // Capitalize each word
+        return term.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      }
+    }
+    // Fallback: use first few meaningful words
+    const words = sentence.split(/\s+/).filter(w => w.length > 3).slice(0, 3);
+    return words.map(w => w.replace(/[^a-zA-Z]/g, '')).filter(Boolean).join(' ').substring(0, 25) || 'General';
+  }
+
+  function displayCards() {
+    currentIndex = 0;
+    document.getElementById('results').classList.remove('hidden');
+    renderDots();
+    showCard(0);
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function showCard(index) {
+    const card = cards[index];
+    const flashcard = document.getElementById('flashcard');
+    flashcard.classList.remove('flipped');
+
+    document.getElementById('cardQuestion').textContent = card.question;
+    document.getElementById('cardAnswer').textContent = card.answer;
+    document.getElementById('cardTopic').textContent = card.topic;
+
+    const diffClass = 'diff-' + card.difficulty;
+    const diffText = card.difficulty.charAt(0).toUpperCase() + card.difficulty.slice(1);
+    document.getElementById('cardDiffFront').className = 'card-difficulty ' + diffClass;
+    document.getElementById('cardDiffFront').textContent = diffText;
+    document.getElementById('cardDiffBack').className = 'card-difficulty ' + diffClass;
+    document.getElementById('cardDiffBack').textContent = diffText;
+
+    document.getElementById('cardCounter').textContent = `${index + 1} / ${cards.length}`;
+    document.getElementById('prevBtn').disabled = index === 0;
+    document.getElementById('nextBtn').disabled = index === cards.length - 1;
+
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === index);
+    });
+  }
+
+  function flipCard() {
+    document.getElementById('flashcard').classList.toggle('flipped');
+  }
+
+  function prevCard() {
+    if (currentIndex > 0) { currentIndex--; showCard(currentIndex); }
+  }
+  function nextCard() {
+    if (currentIndex < cards.length - 1) { currentIndex++; showCard(currentIndex); }
+  }
+
+  function renderDots() {
+    const container = document.getElementById('progressDots');
+    container.innerHTML = '';
+    cards.forEach((_, i) => {
+      const dot = document.createElement('span');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.onclick = () => { currentIndex = i; showCard(i); };
+      container.appendChild(dot);
+    });
+  }
+
+  // --- Quiz Mode Functions ---
+  function switchMode(mode) {
+    const tabs = document.querySelectorAll('.mode-tab');
+    tabs[0].classList.toggle('active', mode === 'study');
+    tabs[1].classList.toggle('active', mode === 'quiz');
+
+    const studyEl = document.getElementById('studyMode');
+    const quizEl = document.getElementById('quizMode');
+    const resultsEl = document.getElementById('quizResults');
+
+    if (mode === 'study') {
+      quizActive = false;
+      studyEl.classList.remove('hidden');
+      quizEl.classList.add('hidden');
+      resultsEl.classList.add('hidden');
+    } else {
+      quizActive = true;
+      studyEl.classList.add('hidden');
+      resultsEl.classList.add('hidden');
+      quizEl.classList.remove('hidden');
+      startQuiz();
+    }
+  }
+
+  function startQuiz() {
+    quizOrder = cards.map((_, i) => i);
+    // Shuffle
+    for (let i = quizOrder.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [quizOrder[i], quizOrder[j]] = [quizOrder[j], quizOrder[i]];
+    }
+    quizCurrentIndex = 0;
+    quizAnswers = [];
+    quizSubmitted = false;
+    quizGraded = false;
+    showQuizQuestion();
+  }
+
+  function showQuizQuestion() {
+    const cardIdx = quizOrder[quizCurrentIndex];
+    const card = cards[cardIdx];
+
+    document.getElementById('quizQuestionText').textContent = card.question;
+    document.getElementById('quizTopic').textContent = card.topic;
+
+    const diffClass = 'diff-' + card.difficulty;
+    const diffText = card.difficulty.charAt(0).toUpperCase() + card.difficulty.slice(1);
+    const diffEl = document.getElementById('quizDifficulty');
+    diffEl.className = 'card-difficulty ' + diffClass;
+    diffEl.textContent = diffText;
+    diffEl.style.position = 'static';
+    diffEl.style.display = 'inline-block';
+    diffEl.style.marginTop = '0.5rem';
+
+    // Update progress
+    const total = cards.length;
+    const answered = quizAnswers.length;
+    document.getElementById('quizProgressLabel').textContent = `Question ${quizCurrentIndex + 1} of ${total}`;
+    const correctSoFar = quizAnswers.filter(a => a.correct).length;
+    document.getElementById('quizScoreLabel').textContent = `Score: ${correctSoFar} / ${answered}`;
+    document.getElementById('quizProgressFill').style.width = `${(quizCurrentIndex / total) * 100}%`;
+
+    // Reset input area
+    document.getElementById('quizAnswerInput').value = '';
+    document.getElementById('quizAnswerInput').disabled = false;
+    document.getElementById('quizSubmitBtn').disabled = false;
+    document.getElementById('quizInputArea').classList.remove('hidden');
+    document.getElementById('quizFeedback').classList.add('hidden');
+    document.getElementById('quizNextBtn').classList.add('hidden');
+    document.getElementById('quizPanel').classList.remove('hidden');
+
+    quizSubmitted = false;
+    quizGraded = false;
+
+    // Focus input
+    setTimeout(() => document.getElementById('quizAnswerInput').focus(), 100);
+  }
+
+  async function submitQuizAnswer() {
+    if (quizSubmitted) return;
+    quizSubmitted = true;
+
+    const userAnswer = document.getElementById('quizAnswerInput').value.trim();
+    const cardIdx = quizOrder[quizCurrentIndex];
+    const card = cards[cardIdx];
+    const correctAnswer = card.answer;
+
+    // Disable input
+    document.getElementById('quizAnswerInput').disabled = true;
+    document.getElementById('quizSubmitBtn').disabled = true;
+    document.getElementById('quizSubmitBtn').textContent = 'Evaluating...';
+
+    // Show feedback
+    document.getElementById('quizUserAnswerText').textContent = userAnswer || '(no answer)';
+    document.getElementById('quizCorrectAnswerText').textContent = correctAnswer;
+    document.getElementById('quizFeedback').classList.remove('hidden');
+
+    // Reset UI
+    document.getElementById('aiVerdict').classList.add('hidden');
+    document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('quizNextBtn').classList.add('hidden');
+    document.getElementById('quizFeedback').dataset.userAnswer = userAnswer;
+
+    const apiKey = document.getElementById('apiKey').value.trim();
+
+    if (!userAnswer) {
+      gradeAnswer(false);
+      showAIVerdictManual(false, 'No answer provided.');
+    } else if (WORKER_URL || apiKey) {
+      // AI-powered evaluation
+      try {
+        const verdict = await evaluateWithAI(apiKey, card.question, correctAnswer, userAnswer);
+        showAIVerdict(verdict);
+        gradeAnswer(verdict.correct);
+      } catch (err) {
+        console.error('AI eval failed:', err);
+        // Fall back to self-grading on API error
+        showSelfGrade();
+      }
+    } else {
+      // No API key — self-grade fallback
+      showSelfGrade();
+    }
+
+    document.getElementById('quizSubmitBtn').textContent = 'Submit Answer';
+  }
+
+  async function evaluateWithAI(apiKey, question, correctAnswer, userAnswer) {
+    let response;
+    if (WORKER_URL) {
+      response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode: 'evaluate', question, correctAnswer, userAnswer })
+      });
+    } else {
+      response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 256,
+          system: `You evaluate quiz answers. Compare the user's answer to the correct answer and return ONLY a JSON object, no markdown, no backticks:
+{"correct": true/false, "partial": true/false, "explanation": "Brief 1-sentence explanation of why the answer is right, wrong, or partially correct"}
+Rules:
+- "correct": true if the user's answer captures the key concepts, even if wording differs
+- "partial": true if the answer is on the right track but missing key details (set correct to false)
+- Be fair — accept paraphrased or simplified versions of the correct answer
+- explanation should be concise and helpful`,
+          messages: [
+            { role: 'user', content: `Question: ${question}\nCorrect Answer: ${correctAnswer}\nUser's Answer: ${userAnswer}` }
+          ]
+        })
+      });
+    }
+
+    if (!response.ok) {
+      throw new Error(`Request returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    let text = data.content[0].text.trim();
+    const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (fenceMatch) text = fenceMatch[1].trim();
+    return JSON.parse(text);
+  }
+
+  function showAIVerdict(verdict) {
+    const el = document.getElementById('aiVerdict');
+    const icon = document.getElementById('verdictIcon');
+    const label = document.getElementById('verdictLabel');
+    const explanation = document.getElementById('verdictExplanation');
+
+    el.classList.remove('hidden', 'correct', 'incorrect', 'partial');
+
+    if (verdict.correct) {
+      el.classList.add('correct');
+      icon.textContent = '\u2713';
+      label.textContent = 'Correct!';
+    } else if (verdict.partial) {
+      el.classList.add('partial');
+      icon.textContent = '\u25CB';
+      label.textContent = 'Partially Correct';
+    } else {
+      el.classList.add('incorrect');
+      icon.textContent = '\u2717';
+      label.textContent = 'Incorrect';
+    }
+    explanation.textContent = verdict.explanation || '';
+
+    // Hide self-grade since AI graded
+    document.getElementById('selfGradeLabel').classList.add('hidden');
+    document.getElementById('selfGrade').classList.add('hidden');
+  }
+
+  function showAIVerdictManual(correct, explanation) {
+    showAIVerdict({ correct, partial: false, explanation });
+  }
+
+  function showSelfGrade() {
+    document.getElementById('aiVerdict').classList.add('hidden');
+    document.getElementById('selfGradeLabel').classList.remove('hidden');
+    document.getElementById('selfGrade').classList.remove('hidden');
+  }
+
+  function gradeAnswer(correct) {
+    if (quizGraded) return;
+    quizGraded = true;
+
+    const userAnswer = document.getElementById('quizFeedback').dataset.userAnswer;
+    const cardIdx = quizOrder[quizCurrentIndex];
+
+    quizAnswers.push({ userAnswer, correct, cardIndex: cardIdx });
+
+    // Highlight selected grade button
+    const btns = document.querySelectorAll('.grade-btn');
+    btns.forEach(b => b.classList.remove('selected'));
+    if (correct) btns[0].classList.add('selected');
+    else btns[1].classList.add('selected');
+
+    // Update score display
+    const correctCount = quizAnswers.filter(a => a.correct).length;
+    document.getElementById('quizScoreLabel').textContent = `Score: ${correctCount} / ${quizAnswers.length}`;
+
+    // Show next button
+    const nextBtn = document.getElementById('quizNextBtn');
+    nextBtn.classList.remove('hidden');
+    if (quizCurrentIndex >= cards.length - 1) {
+      nextBtn.textContent = 'See Results';
+    } else {
+      nextBtn.textContent = 'Next Question';
+    }
+  }
+
+  function nextQuizQuestion() {
+    quizCurrentIndex++;
+    if (quizCurrentIndex >= cards.length) {
+      showQuizResults();
+    } else {
+      showQuizQuestion();
+    }
+  }
+
+  function showQuizResults() {
+    document.getElementById('quizMode').classList.add('hidden');
+    document.getElementById('quizResults').classList.remove('hidden');
+
+    const total = quizAnswers.length;
+    const correct = quizAnswers.filter(a => a.correct).length;
+    const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+    document.getElementById('quizScoreBig').textContent = pct + '%';
+    document.getElementById('quizScoreDetail').textContent = `${correct} of ${total} correct`;
+
+    const fill = document.getElementById('quizScoreFill');
+    fill.style.width = pct + '%';
+    fill.className = 'quiz-score-fill ' + (pct >= 80 ? 'good' : pct >= 50 ? 'ok' : 'poor');
+
+    // Build review list
+    const list = document.getElementById('quizReviewList');
+    list.innerHTML = '';
+    quizAnswers.forEach((a, i) => {
+      const card = cards[a.cardIndex];
+      const item = document.createElement('div');
+      item.className = 'review-item';
+      item.innerHTML = `
+        <div class="review-item-header">
+          <span class="review-q">${i + 1}. ${escHtml(card.question)}</span>
+          <span class="review-badge ${a.correct ? 'correct' : 'incorrect'}">${a.correct ? 'Correct' : 'Incorrect'}</span>
+        </div>
+        <div class="review-answers">
+          Your answer: <span>${escHtml(a.userAnswer || '(no answer)')}</span><br>
+          Correct answer: <span>${escHtml(card.answer)}</span>
+        </div>`;
+      list.appendChild(item);
+    });
+
+    // Update progress bar to 100%
+    document.getElementById('quizProgressFill').style.width = '100%';
+  }
+
+  function escHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function retakeQuiz() {
+    document.getElementById('quizResults').classList.add('hidden');
+    document.getElementById('quizMode').classList.remove('hidden');
+    startQuiz();
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (document.getElementById('results').classList.contains('hidden')) return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+    // Quiz mode keyboard
+    if (quizActive && e.target.tagName === 'TEXTAREA') {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        if (!quizSubmitted) submitQuizAnswer();
+      }
+      return;
+    }
+
+    if (e.target.tagName === 'TEXTAREA') return;
+
+    // Study mode keyboard
+    if (!quizActive) {
+      if (e.key === 'ArrowLeft') prevCard();
+      else if (e.key === 'ArrowRight') nextCard();
+      else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+    }
+  });
+
+  // --- Export functions ---
+  function exportJSON() {
+    download('flashcards.json', JSON.stringify(cards, null, 2), 'application/json');
+  }
+
+  function exportCSV() {
+    const header = 'Question,Answer,Difficulty,Topic\n';
+    const rows = cards.map(c =>
+      `"${esc(c.question)}","${esc(c.answer)}","${c.difficulty}","${esc(c.topic)}"`
+    ).join('\n');
+    download('flashcards.csv', header + rows, 'text/csv');
+  }
+
+  function exportText() {
+    const text = cards.map((c, i) =>
+      `Card ${i + 1} [${c.difficulty}] — ${c.topic}\nQ: ${c.question}\nA: ${c.answer}`
+    ).join('\n\n---\n\n');
+    download('flashcards.txt', text, 'text/plain');
+  }
+
+  function esc(str) { return str.replace(/"/g, '""'); }
+
+  function download(filename, content, type) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // Show appropriate UI based on whether WORKER_URL is configured
+  if (WORKER_URL) {
+    document.getElementById('workerModeUI').style.display = 'block';
+    document.getElementById('apiKeyModeUI').style.display = 'none';
+    document.getElementById('aiSectionBadge').textContent = '(AI Enabled)';
+    document.getElementById('aiSectionBadge').style.color = 'var(--success)';
+  }
+</script>
+</body>
+</html>

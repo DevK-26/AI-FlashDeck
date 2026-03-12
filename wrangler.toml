@@ -1,0 +1,7 @@
+name = "flashcard-generator"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# After deploying, add your Anthropic key as a secret (never commit it here):
+#   wrangler secret put ANTHROPIC_API_KEY
