@@ -459,6 +459,15 @@
     border-color: var(--amber);
     color: var(--amber);
   }
+  .export-btn-pdf {
+    border-color: var(--amber-dim);
+    color: var(--amber);
+  }
+  .export-btn-pdf:hover {
+    background: var(--amber);
+    color: var(--bg-deep);
+    border-color: var(--amber);
+  }
 
   /* --- Mode Toggle --- */
   .mode-toggle {
@@ -1551,6 +1560,7 @@
             <button class="export-btn" onclick="exportJSON()">Export JSON</button>
             <button class="export-btn" onclick="exportCSV()">Export CSV</button>
             <button class="export-btn" onclick="exportText()">Export Text</button>
+            <button class="export-btn export-btn-pdf" onclick="exportPDF()">Export PDF</button>
           </div>
         </div>
 
@@ -2459,6 +2469,13 @@ Rules:
     download(deck.name + '.json', JSON.stringify(exportData, null, 2), 'application/json');
   }
 
+  function exportDeckPDF(id) {
+    const decks = loadDecks();
+    const deck = decks[id];
+    if (!deck) return;
+    exportCardsPDF(deck.cards, deck.name);
+  }
+
   // ─── Page Navigation ─────────────────────────────────────────────────────
   function showPage(page) {
     currentPage = page;
@@ -2589,7 +2606,8 @@ Rules:
         </div>
         <div class="deck-actions" onclick="event.stopPropagation()">
           <button class="deck-action-btn" onclick="shareDeck('${id}')" title="Share">&#128279;</button>
-          <button class="deck-action-btn" onclick="exportDeck('${id}')" title="Export">&#8681;</button>
+          <button class="deck-action-btn" onclick="exportDeck('${id}')" title="Export JSON">&#8681;</button>
+          <button class="deck-action-btn" onclick="exportDeckPDF('${id}')" title="Export PDF">&#128196;</button>
           <button class="deck-action-btn" onclick="openRenameModal('${id}')" title="Rename">&#9998;</button>
           <button class="deck-action-btn danger" onclick="deleteDeck('${id}')" title="Delete">&#10005;</button>
         </div>
@@ -3335,6 +3353,145 @@ Rules:
       `Card ${i + 1} [${c.difficulty}] — ${c.topic}\nQ: ${c.question}\nA: ${c.answer}`
     ).join('\n\n---\n\n');
     download('flashcards.txt', text, 'text/plain');
+  }
+
+  // --- PDF Export ---
+  let jsPDFLoading = false;
+  function loadJsPDF(callback) {
+    if (typeof jspdf !== 'undefined') { callback(); return; }
+    if (jsPDFLoading) return;
+    jsPDFLoading = true;
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js';
+    script.onload = () => { jsPDFLoading = false; callback(); };
+    script.onerror = () => { jsPDFLoading = false; alert('Failed to load PDF library. Please check your internet connection.'); };
+    document.head.appendChild(script);
+  }
+
+  function exportCardsPDF(cardsArray, deckName) {
+    if (!cardsArray || !cardsArray.length) { alert('No cards to export.'); return; }
+    loadJsPDF(() => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const pageW = 210, pageH = 297;
+      const mL = 15, mR = 15, mT = 15, mB = 20;
+      const cW = pageW - mL - mR;
+      let y = mT;
+
+      const amber = [212, 168, 83];
+      const dark = [26, 26, 26];
+      const gray = [122, 113, 104];
+      const cardBg = [245, 245, 240];
+      const cardBorder = [212, 208, 200];
+      const white = [255, 255, 255];
+      const diffColors = {
+        easy: { bg: [109, 184, 122], text: white },
+        medium: { bg: [212, 168, 83], text: white },
+        hard: { bg: [212, 93, 93], text: white }
+      };
+
+      // Header
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(22);
+      doc.setTextColor(...dark);
+      doc.text(deckName || 'Flashcards', mL, y + 7);
+      y += 12;
+      doc.setDrawColor(...amber);
+      doc.setLineWidth(0.8);
+      doc.line(mL, y, pageW - mR, y);
+      y += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(...gray);
+      const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      doc.text(cardsArray.length + ' cards  |  Exported ' + dateStr, mL, y);
+      y += 10;
+
+      // Cards
+      const accentW = 3, padX = 6, padY = 4, gap = 8;
+
+      cardsArray.forEach((card) => {
+        const qText = 'Q: ' + card.question;
+        const aText = 'A: ' + card.answer;
+        doc.setFontSize(11);
+        const qLines = doc.splitTextToSize(qText, cW - accentW - padX * 2 - 30);
+        doc.setFontSize(10);
+        const aLines = doc.splitTextToSize(aText, cW - accentW - padX * 2);
+        const topicH = 5;
+        const qH = qLines.length * 5;
+        const aH = aLines.length * 4.5;
+        const cardH = Math.max(padY + topicH + 3 + qH + 4 + aH + padY, 25);
+
+        if (y + cardH > pageH - mB) { doc.addPage(); y = mT; }
+
+        // Card bg
+        doc.setFillColor(...cardBg);
+        doc.setDrawColor(...cardBorder);
+        doc.setLineWidth(0.3);
+        doc.roundedRect(mL, y, cW, cardH, 2, 2, 'FD');
+
+        // Amber accent
+        doc.setFillColor(...amber);
+        doc.roundedRect(mL, y, accentW, cardH, 2, 0, 'F');
+        doc.rect(mL + 1.5, y, accentW - 1.5, cardH, 'F');
+
+        let ix = mL + accentW + padX;
+        let iy = y + padY;
+
+        // Difficulty badge
+        const diff = (card.difficulty || 'medium').toLowerCase();
+        const bc = diffColors[diff] || diffColors.medium;
+        const badgeLabel = diff.charAt(0).toUpperCase() + diff.slice(1);
+        doc.setFontSize(7);
+        const bw = doc.getTextWidth(badgeLabel) + 4;
+        const bx = mL + cW - padX - bw;
+        doc.setFillColor(...bc.bg);
+        doc.roundedRect(bx, iy, bw, 4, 1, 1, 'F');
+        doc.setTextColor(...bc.text);
+        doc.text(badgeLabel, bx + 2, iy + 3);
+
+        // Topic
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(8);
+        doc.setTextColor(...gray);
+        doc.text(card.topic || 'General', ix, iy + 3.5);
+        iy += topicH + 3;
+
+        // Question
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(...dark);
+        doc.text(qLines, ix, iy + 4);
+        iy += qH + 4;
+
+        // Answer
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(80, 80, 80);
+        doc.text(aLines, ix, iy + 3.5);
+
+        y += cardH + gap;
+      });
+
+      // Page numbers
+      const total = doc.getNumberOfPages();
+      for (let p = 1; p <= total; p++) {
+        doc.setPage(p);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(...gray);
+        doc.text('Page ' + p + ' of ' + total, pageW / 2, pageH - 10, { align: 'center' });
+      }
+
+      const safeName = (deckName || 'flashcards').replace(/[/\\?%*:|"<>]/g, '-');
+      doc.save(safeName + '.pdf');
+    });
+  }
+
+  function exportPDF() {
+    if (!cards.length) { alert('No cards to export.'); return; }
+    const name = document.getElementById('deckNameInput').value.trim() || 'Flashcards';
+    exportCardsPDF(cards, name);
   }
 
   function esc(str) { return str.replace(/"/g, '""'); }
