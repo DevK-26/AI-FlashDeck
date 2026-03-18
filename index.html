@@ -32,6 +32,7 @@
   body {
     font-family: 'Source Serif 4', Georgia, serif;
     background: var(--bg-deep);
+    background-image: radial-gradient(ellipse at 50% 0%, rgba(212,168,83,0.04) 0%, transparent 60%);
     color: var(--text-primary);
     min-height: 100vh;
     line-height: 1.6;
@@ -99,11 +100,26 @@
     position: relative;
   }
   .main-nav-btn:hover { color: var(--cream); background: var(--bg-card-hover); }
+  .main-nav-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--amber);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+    border-radius: 2px;
+  }
   .main-nav-btn.active {
     background: var(--bg-deep);
     color: var(--amber);
     font-weight: 600;
     border-color: var(--amber-dim);
+  }
+  .main-nav-btn.active::after {
+    width: 60%;
   }
   .main-nav-btn .badge {
     position: absolute;
@@ -127,7 +143,8 @@
   }
 
   .page { display: none; }
-  .page.active { display: block; }
+  .page.active { display: block; animation: pageFadeIn 0.25s ease-out; }
+  @keyframes pageFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
   /* --- Sections --- */
   .section {
@@ -136,6 +153,11 @@
     border-radius: var(--radius);
     padding: 1.5rem;
     margin-bottom: 1.5rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .section:focus-within {
+    border-color: rgba(212,168,83,0.3);
+    box-shadow: 0 0 0 1px rgba(212,168,83,0.1), 0 4px 20px rgba(212,168,83,0.06);
   }
   .section-title {
     font-family: 'Playfair Display', serif;
@@ -226,11 +248,17 @@
   }
   .generate-btn:active { transform: translateY(0); }
   .generate-btn:disabled {
-    opacity: 0.5;
+    opacity: 0.7;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
   }
+  .generate-btn.loading {
+    background: linear-gradient(135deg, var(--amber), var(--amber-light), var(--amber));
+    background-size: 200% 100%;
+    animation: btnShimmer 1.5s ease infinite;
+  }
+  @keyframes btnShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
   /* --- Status --- */
   .status {
@@ -791,6 +819,11 @@
     border-radius: var(--radius);
     padding: 1.25rem;
     text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
   }
   .stat-value {
     font-family: 'Playfair Display', serif;
@@ -824,8 +857,12 @@
     transition: all 0.2s;
     cursor: pointer;
   }
+  .deck-item {
+    border-left: 3px solid transparent;
+  }
   .deck-item:hover {
     border-color: var(--amber-dim);
+    border-left-color: var(--amber);
     background: var(--bg-card-hover);
   }
   .deck-info { flex: 1; }
@@ -1292,6 +1329,48 @@
   .card-enter-right .flashcard { animation: slideInRight 0.25s ease-out; }
   .flashcard.swiping { transition: transform 0.05s linear !important; }
 
+  /* --- Import Button --- */
+  .import-btn {
+    padding: 0.55rem 1.2rem;
+    background: linear-gradient(135deg, rgba(212,168,83,0.15), rgba(212,168,83,0.05));
+    border-color: var(--amber-dim);
+    color: var(--amber);
+    font-weight: 500;
+  }
+  .import-btn:hover {
+    background: linear-gradient(135deg, rgba(212,168,83,0.25), rgba(212,168,83,0.1));
+    border-color: var(--amber);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(212,168,83,0.15);
+  }
+
+  /* --- Character Count --- */
+  .char-count {
+    text-align: right;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+    transition: color 0.2s;
+  }
+  .char-count.has-text { color: var(--text-secondary); }
+  .char-count.good { color: var(--success); }
+
+  /* --- Footer --- */
+  .site-footer {
+    text-align: center;
+    padding: 2rem 1.5rem 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-top: 2rem;
+  }
+  .site-footer a {
+    color: var(--amber-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .site-footer a:hover { color: var(--amber); }
+
   /* --- Hidden --- */
   .hidden { display: none !important; }
 
@@ -1350,7 +1429,8 @@
     <!-- Input Section -->
     <div class="section">
       <div class="section-title"><span class="icon">&#9998;</span> Source Material</div>
-      <textarea id="sourceText" placeholder="Paste your study material here — lecture notes, textbook passages, articles, or any text you want to learn from..."></textarea>
+      <textarea id="sourceText" placeholder="Paste your study material here — lecture notes, textbook passages, articles, or any text you want to learn from..." oninput="updateCharCount()"></textarea>
+      <div class="char-count" id="charCount">0 characters</div>
       <div class="row">
         <div>
           <label for="numCards">Number of Cards</label>
@@ -1561,7 +1641,7 @@
   <div class="page" id="page-decks">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
       <div class="section-title" style="margin-bottom:0; font-size:1.4rem;"><span class="icon">&#128218;</span> My Decks</div>
-      <button class="export-btn" onclick="importDeck()" style="padding:0.6rem 1.2rem;">Import Deck</button>
+      <button class="export-btn import-btn" onclick="importDeck()">Import Deck</button>
     </div>
     <div class="deck-list" id="deckList"></div>
   </div>
@@ -2611,6 +2691,15 @@ Rules:
     document.getElementById('status').className = 'status';
   }
 
+  function updateCharCount() {
+    const text = document.getElementById('sourceText').value;
+    const el = document.getElementById('charCount');
+    const len = text.length;
+    el.textContent = len + ' character' + (len !== 1 ? 's' : '');
+    el.classList.toggle('has-text', len > 0);
+    el.classList.toggle('good', len >= 100);
+  }
+
   async function generate() {
     const text = document.getElementById('sourceText').value.trim();
     const numCards = parseInt(document.getElementById('numCards').value);
@@ -2624,6 +2713,7 @@ Rules:
 
     const btn = document.getElementById('generateBtn');
     btn.disabled = true;
+    btn.classList.add('loading');
 
     if (WORKER_URL || apiKey) {
       showStatus('<span class="spinner"></span> Generating AI-powered flashcards...');
@@ -2685,6 +2775,7 @@ Rules:
         showStatus('Error: ' + err.message, true);
       } finally {
         btn.disabled = false;
+        btn.classList.remove('loading');
       }
     } else {
       showStatus('<span class="spinner"></span> Generating flashcards from your text...');
@@ -2703,6 +2794,7 @@ Rules:
         showStatus('Error: ' + err.message, true);
       } finally {
         btn.disabled = false;
+        btn.classList.remove('loading');
       }
     }
   }
@@ -3510,5 +3602,10 @@ Rules:
     () => { if (!reviewFlipped) flipReviewCard(); }
   );
 </script>
+
+<footer class="site-footer">
+  Made with care for better learning
+</footer>
+
 </body>
 </html>
