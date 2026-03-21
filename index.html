@@ -1527,6 +1527,132 @@
     to { opacity: 1; transform: scale(1); }
   }
 
+  /* --- Explain Panel --- */
+  .explain-btn {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 1rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0.25rem 0.6rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .explain-btn:hover {
+    border-color: var(--amber-dim);
+    color: var(--amber);
+    background: rgba(212,168,83,0.08);
+  }
+  .explain-btn .explain-icon { font-style: normal; }
+
+  .explain-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--amber-dim);
+    border-radius: 0 var(--radius) var(--radius) var(--radius);
+    margin-top: 0.75rem;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: max-height 0.35s ease, opacity 0.3s ease, transform 0.3s ease, margin 0.3s ease;
+    margin-bottom: 0;
+  }
+  .explain-panel.open {
+    max-height: 400px;
+    opacity: 1;
+    transform: translateY(0);
+    margin-bottom: 1rem;
+  }
+  .explain-panel-inner {
+    padding: 1rem 1.25rem;
+  }
+  .explain-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  .explain-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--amber);
+  }
+  .explain-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.15rem 0.4rem;
+    line-height: 1;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+  .explain-close-btn:hover {
+    color: var(--cream);
+    background: rgba(255,255,255,0.05);
+  }
+  .explain-text {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--cream-soft);
+    min-height: 2rem;
+  }
+  .explain-text .thinking {
+    color: var(--text-muted);
+    animation: explainPulse 1.5s ease-in-out infinite;
+  }
+  @keyframes explainPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+  .explain-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+  .explain-regen-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.35rem 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .explain-regen-btn:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+  .explain-regen-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .explain-no-api {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
   /* --- Hidden --- */
   .hidden { display: none !important; }
 
@@ -1684,12 +1810,28 @@
                 <span class="card-label">Question</span>
                 <span class="card-topic" id="cardTopic"></span>
                 <div class="card-text" id="cardQuestion"></div>
+                <button class="explain-btn" onclick="event.stopPropagation(); openExplainPanel()" title="Get AI explanation"><span class="explain-icon">&#128161;</span> Explain</button>
                 <span class="card-difficulty" id="cardDiffFront"></span>
               </div>
               <div class="card-face card-back">
                 <span class="card-label">Answer</span>
                 <div class="card-text" id="cardAnswer"></div>
+                <button class="explain-btn" onclick="event.stopPropagation(); openExplainPanel()" title="Get AI explanation"><span class="explain-icon">&#128161;</span> Explain</button>
                 <span class="card-difficulty" id="cardDiffBack"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Explain Panel -->
+          <div class="explain-panel" id="explainPanel">
+            <div class="explain-panel-inner">
+              <div class="explain-header">
+                <span class="explain-title">&#128161; AI Explanation</span>
+                <button class="explain-close-btn" onclick="closeExplainPanel()" title="Close">&times;</button>
+              </div>
+              <div class="explain-text" id="explainText"></div>
+              <div class="explain-actions">
+                <button class="explain-regen-btn" id="explainRegenBtn" onclick="regenerateExplanation()">&#8635; Regenerate</button>
               </div>
             </div>
           </div>
@@ -3112,6 +3254,7 @@ Rules:
   }
 
   function showCard(index, direction) {
+    closeExplainPanel();
     const card = cards[index];
     const flashcard = document.getElementById('flashcard');
     flashcard.classList.remove('flipped');
@@ -3147,6 +3290,7 @@ Rules:
   }
 
   function flipCard() {
+    closeExplainPanel();
     document.getElementById('flashcard').classList.toggle('flipped');
   }
 
@@ -3906,6 +4050,167 @@ Rules:
     () => { if (!reviewFlipped) flipReviewCard(); },
     () => { if (!reviewFlipped) flipReviewCard(); }
   );
+
+  // ─── AI Explain ──────────────────────────────────────────────────────────
+  const explainCache = {};
+  let explainAbortController = null;
+
+  function openExplainPanel() {
+    const panel = document.getElementById('explainPanel');
+    if (panel.classList.contains('open')) {
+      closeExplainPanel();
+      return;
+    }
+
+    const apiKey = document.getElementById('apiKey').value.trim();
+    if (!WORKER_URL && !apiKey) {
+      document.getElementById('explainText').innerHTML = '<span class="explain-no-api">Configure your API key in Settings to use AI explanations</span>';
+      document.getElementById('explainRegenBtn').style.display = 'none';
+      panel.classList.add('open');
+      return;
+    }
+
+    document.getElementById('explainRegenBtn').style.display = '';
+    panel.classList.add('open');
+
+    if (explainCache[currentIndex]) {
+      document.getElementById('explainText').textContent = explainCache[currentIndex];
+      document.getElementById('explainRegenBtn').disabled = false;
+    } else {
+      fetchExplanation();
+    }
+  }
+
+  function closeExplainPanel() {
+    const panel = document.getElementById('explainPanel');
+    panel.classList.remove('open');
+    if (explainAbortController) {
+      explainAbortController.abort();
+      explainAbortController = null;
+    }
+  }
+
+  function regenerateExplanation() {
+    delete explainCache[currentIndex];
+    fetchExplanation();
+  }
+
+  async function fetchExplanation() {
+    const card = cards[currentIndex];
+    if (!card) return;
+
+    const textEl = document.getElementById('explainText');
+    const regenBtn = document.getElementById('explainRegenBtn');
+    textEl.innerHTML = '<span class="thinking">Thinking...</span>';
+    regenBtn.disabled = true;
+
+    if (explainAbortController) explainAbortController.abort();
+    explainAbortController = new AbortController();
+    const signal = explainAbortController.signal;
+
+    const systemPrompt = 'You are a helpful tutor. The student is studying a flashcard.\nGive a clear, concise explanation (3\u20135 sentences) that helps them truly understand WHY this answer is correct. Use a simple analogy if it helps. Do not repeat the question or answer verbatim.';
+    const userMsg = `Question: ${card.question}\nAnswer: ${card.answer}`;
+    const apiKey = document.getElementById('apiKey').value.trim();
+    const cardIdx = currentIndex;
+
+    try {
+      let response;
+      if (WORKER_URL) {
+        response = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: 'explain', question: card.question, answer: card.answer }),
+          signal
+        });
+
+        // Worker may not support streaming; try to read as stream, fall back to JSON
+        if (response.ok && response.headers.get('content-type')?.includes('text/event-stream')) {
+          await readStream(response, textEl, cardIdx, signal);
+        } else if (response.ok) {
+          const data = await response.json();
+          const text = data.content?.[0]?.text || data.text || data.explanation || JSON.stringify(data);
+          textEl.textContent = text;
+          explainCache[cardIdx] = text;
+        } else {
+          throw new Error(`Request returned ${response.status}`);
+        }
+      } else {
+        response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 512,
+            stream: true,
+            system: systemPrompt,
+            messages: [{ role: 'user', content: userMsg }]
+          }),
+          signal
+        });
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err.error?.message || `Request returned ${response.status}`);
+        }
+
+        await readStream(response, textEl, cardIdx, signal);
+      }
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      textEl.textContent = 'Error: ' + err.message;
+    } finally {
+      regenBtn.disabled = false;
+    }
+  }
+
+  async function readStream(response, textEl, cardIdx, signal) {
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    let buffer = '';
+
+    textEl.textContent = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (signal.aborted) { reader.cancel(); return; }
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const payload = line.slice(6).trim();
+          if (payload === '[DONE]') continue;
+
+          try {
+            const parsed = JSON.parse(payload);
+            const delta = parsed.delta?.text
+              || parsed.choices?.[0]?.delta?.content
+              || '';
+            if (delta) {
+              fullText += delta;
+              textEl.textContent = fullText;
+            }
+          } catch (e) { /* skip non-JSON lines */ }
+        }
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') throw err;
+    }
+
+    if (fullText) {
+      explainCache[cardIdx] = fullText;
+    }
+  }
 
   // ─── Focus Mode ──────────────────────────────────────────────────────────
   let focusModeActive = false;
