@@ -1380,6 +1380,153 @@
   }
   .site-footer a:hover { color: var(--amber); }
 
+  /* --- Focus Mode --- */
+  .focus-mode-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .focus-mode-btn:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  .focus-exit-btn {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10001;
+    background: rgba(26,26,26,0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: none;
+  }
+  .focus-exit-btn:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+    background: rgba(36,36,36,0.95);
+  }
+
+  .focus-label {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10001;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: none;
+  }
+
+  .focus-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    z-index: 10002;
+    background: rgba(26,26,26,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--amber-dim);
+    border-radius: var(--radius);
+    padding: 1rem 2rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--amber);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .focus-toast.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  body.focus-mode header,
+  body.focus-mode .main-nav,
+  body.focus-mode .export-bar,
+  body.focus-mode .progress-dots,
+  body.focus-mode .shortcut-bar,
+  body.focus-mode .pomodoro,
+  body.focus-mode .site-footer,
+  body.focus-mode .onboarding-tips,
+  body.focus-mode .mode-toggle,
+  body.focus-mode .cards-header h2,
+  body.focus-mode .tts-bar,
+  body.focus-mode .srs-buttons,
+  body.focus-mode #saveDeckBar,
+  body.focus-mode .cards-header > div > .card-counter,
+  body.focus-mode #page-generate > .section,
+  body.focus-mode #page-generate > .generate-btn,
+  body.focus-mode #page-generate > .status {
+    display: none !important;
+  }
+
+  body.focus-mode {
+    overflow: hidden;
+  }
+
+  body.focus-mode .container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  body.focus-mode .cards-header {
+    justify-content: center;
+  }
+
+  body.focus-mode .card-viewport {
+    height: 340px;
+    transition: height 0.3s ease;
+  }
+
+  body.focus-mode .focus-exit-btn,
+  body.focus-mode .focus-label {
+    display: block;
+  }
+
+  body.focus-mode .focus-mode-btn {
+    display: none;
+  }
+
+  body.focus-mode #results {
+    animation: focusFadeIn 0.4s ease-out;
+  }
+
+  @keyframes focusFadeIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
   /* --- Hidden --- */
   .hidden { display: none !important; }
 
@@ -1506,7 +1653,7 @@
     <div id="results" class="hidden">
       <div class="section" style="background:transparent; border:none; padding:0;">
         <!-- Save Deck Bar -->
-        <div style="display:flex; gap:0.75rem; margin-bottom:1rem; align-items:center;">
+        <div id="saveDeckBar" style="display:flex; gap:0.75rem; margin-bottom:1rem; align-items:center;">
           <input type="text" id="deckNameInput" placeholder="Deck name (e.g., Biology Ch. 5)" style="flex:1;">
           <button class="generate-btn" style="width:auto; padding:0.75rem 1.5rem; font-size:0.95rem;" onclick="saveDeck()">Save Deck</button>
         </div>
@@ -1522,6 +1669,7 @@
           <div class="cards-header">
             <h2>Your Flashcards</h2>
             <div style="display:flex; align-items:center; gap:1rem;">
+              <button class="focus-mode-btn" onclick="toggleFocusMode()" title="Enter Focus Mode">&#9673; Focus</button>
               <span class="card-counter" id="cardCounter">1 / 10</span>
               <div class="cards-nav">
                 <button class="nav-btn" id="prevBtn" onclick="prevCard()">&#8592;</button>
@@ -3758,7 +3906,71 @@ Rules:
     () => { if (!reviewFlipped) flipReviewCard(); },
     () => { if (!reviewFlipped) flipReviewCard(); }
   );
+
+  // ─── Focus Mode ──────────────────────────────────────────────────────────
+  let focusModeActive = false;
+
+  function toggleFocusMode() {
+    if (focusModeActive) {
+      exitFocusMode();
+    } else {
+      enterFocusMode();
+    }
+  }
+
+  function enterFocusMode() {
+    focusModeActive = true;
+    document.body.classList.add('focus-mode');
+
+    // Request fullscreen
+    const el = document.documentElement;
+    if (el.requestFullscreen) {
+      el.requestFullscreen().catch(() => {});
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen();
+    }
+
+    // Show toast
+    const toast = document.getElementById('focusToast');
+    requestAnimationFrame(() => {
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 1500);
+    });
+  }
+
+  function exitFocusMode() {
+    focusModeActive = false;
+    document.body.classList.remove('focus-mode');
+
+    // Exit fullscreen if active
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
+  }
+
+  // Sync state when user exits fullscreen via Escape or browser UI
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && focusModeActive) {
+      focusModeActive = false;
+      document.body.classList.remove('focus-mode');
+    }
+  });
+  document.addEventListener('webkitfullscreenchange', () => {
+    if (!document.webkitFullscreenElement && focusModeActive) {
+      focusModeActive = false;
+      document.body.classList.remove('focus-mode');
+    }
+  });
 </script>
+
+<!-- Focus Mode Overlay Elements -->
+<button class="focus-exit-btn" id="focusExitBtn" onclick="toggleFocusMode()">&#10005; Exit Focus</button>
+<div class="focus-label" id="focusLabel">Focus Mode</div>
+<div class="focus-toast" id="focusToast">Focus Mode On &#127919;</div>
 
 <footer class="site-footer">
   Made with care for better learning
