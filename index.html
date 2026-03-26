@@ -1474,6 +1474,7 @@
   body.focus-mode .pomodoro,
   body.focus-mode .site-footer,
   body.focus-mode .onboarding-tips,
+  body.focus-mode .study-toggles,
   body.focus-mode .mode-toggle,
   body.focus-mode .cards-header h2,
   body.focus-mode .tts-bar,
@@ -1653,6 +1654,199 @@
     font-style: italic;
   }
 
+  /* --- Study Mode Toggles (Shuffle & Reverse) --- */
+  .study-toggles {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .study-toggle-btn {
+    padding: 0.45rem 0.9rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .study-toggle-btn:hover {
+    border-color: var(--amber-dim);
+    color: var(--cream);
+  }
+  .study-toggle-btn.active {
+    background: rgba(212,168,83,0.12);
+    border-color: var(--amber);
+    color: var(--amber);
+    font-weight: 600;
+  }
+  .study-toggle-btn .toggle-icon { font-size: 0.95rem; }
+  .reverse-indicator {
+    position: absolute;
+    top: 0.9rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--amber-dim);
+    background: rgba(212,168,83,0.1);
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    pointer-events: none;
+    display: none;
+  }
+
+  /* --- Card Images --- */
+  .card-image {
+    max-width: 80%;
+    max-height: 120px;
+    object-fit: contain;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .card-face .card-image + .card-text { font-size: 1rem; }
+  .card-front .card-image + .card-text { font-size: 1.05rem; }
+
+  .image-upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.75rem;
+    position: relative;
+  }
+  .image-upload-zone:hover, .image-upload-zone.drag-over {
+    border-color: var(--amber);
+    background: rgba(212,168,83,0.05);
+  }
+  .image-upload-zone .upload-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .image-upload-zone .upload-icon { font-size: 1.5rem; opacity: 0.6; }
+  .image-upload-zone .upload-hint { font-size: 0.75rem; color: var(--text-muted); }
+  .image-upload-zone input[type="file"] { display: none; }
+
+  .image-url-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .image-url-row input {
+    flex: 1;
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+  }
+  .image-url-row button {
+    padding: 0.5rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .image-url-row button:hover { border-color: var(--amber); color: var(--amber); }
+
+  .image-preview-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: var(--bg-input);
+    border-radius: 8px;
+  }
+  .image-preview-row img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .image-preview-row .preview-info {
+    flex: 1;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+  .image-preview-row .preview-remove {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    width: 28px; height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+  }
+  .image-preview-row .preview-remove:hover { border-color: var(--error); color: var(--error); }
+
+  .card-img-badge {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    font-size: 0.7rem;
+    background: rgba(212,168,83,0.15);
+    color: var(--amber);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .card-img-edit-btn {
+    position: absolute;
+    top: 1rem;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: auto;
+    background: rgba(26,26,26,0.7);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 3;
+    display: none;
+  }
+  .card-face:hover .card-img-edit-btn { display: flex; align-items: center; gap: 0.25rem; }
+  .card-img-edit-btn:hover { border-color: var(--amber); color: var(--amber); }
+
+  .quiz-card-image, .review-card-image {
+    max-width: 200px;
+    max-height: 120px;
+    object-fit: contain;
+    border-radius: 6px;
+    margin: 0.5rem auto;
+    display: block;
+    border: 1px solid var(--border);
+  }
+
   /* --- Hidden --- */
   .hidden { display: none !important; }
 
@@ -1713,6 +1907,29 @@
       <div class="section-title"><span class="icon">&#9998;</span> Source Material</div>
       <textarea id="sourceText" placeholder="Paste your study material here — lecture notes, textbook passages, articles, or any text you want to learn from..." oninput="updateCharCount()"></textarea>
       <div class="char-count" id="charCount">0 characters</div>
+
+      <!-- Image Upload for Cards -->
+      <div style="margin-top:1rem;">
+        <label>Card Image (optional)</label>
+        <div class="image-upload-zone" id="imageUploadZone">
+          <div class="upload-label" id="uploadLabel">
+            <span class="upload-icon">&#128444;</span>
+            <span>Drop an image here, click to upload, or paste from clipboard</span>
+            <span class="upload-hint">PNG, JPG, GIF, SVG, or WebP (max 2MB)</span>
+          </div>
+          <input type="file" id="imageFileInput" accept="image/*">
+        </div>
+        <div class="image-url-row">
+          <input type="text" id="imageUrlInput" placeholder="Or paste an image URL...">
+          <button onclick="loadImageFromUrl()">Add URL</button>
+        </div>
+        <div class="image-preview-row hidden" id="imagePreview">
+          <img id="imagePreviewImg" src="" alt="Preview">
+          <div class="preview-info" id="imagePreviewInfo">Image loaded</div>
+          <button class="preview-remove" onclick="removeUploadedImage()" title="Remove image">&times;</button>
+        </div>
+      </div>
+
       <div class="row">
         <div>
           <label for="numCards">Number of Cards</label>
@@ -1792,6 +2009,14 @@
 
         <!-- Study Mode -->
         <div id="studyMode">
+          <div class="study-toggles">
+            <button class="study-toggle-btn" id="shuffleBtn" onclick="toggleShuffle()" title="Shuffle card order">
+              <span class="toggle-icon">&#128256;</span> Shuffle
+            </button>
+            <button class="study-toggle-btn" id="reverseBtn" onclick="toggleReverse()" title="Show answer first, guess the question">
+              <span class="toggle-icon">&#128260;</span> Reverse
+            </button>
+          </div>
           <div class="cards-header">
             <h2>Your Flashcards</h2>
             <div style="display:flex; align-items:center; gap:1rem;">
@@ -1809,13 +2034,17 @@
               <div class="card-face card-front">
                 <span class="card-label">Question</span>
                 <span class="card-topic" id="cardTopic"></span>
+                <img class="card-image hidden" id="cardImageFront" src="" alt="Card image">
                 <div class="card-text" id="cardQuestion"></div>
+                <button class="card-img-edit-btn" onclick="event.stopPropagation(); openCardImageEditor('front')" title="Edit image">&#128444; Image</button>
                 <button class="explain-btn" onclick="event.stopPropagation(); openExplainPanel()" title="Get AI explanation"><span class="explain-icon">&#128161;</span> Explain</button>
                 <span class="card-difficulty" id="cardDiffFront"></span>
               </div>
               <div class="card-face card-back">
                 <span class="card-label">Answer</span>
+                <img class="card-image hidden" id="cardImageBack" src="" alt="Card image">
                 <div class="card-text" id="cardAnswer"></div>
+                <button class="card-img-edit-btn" onclick="event.stopPropagation(); openCardImageEditor('back')" title="Edit image">&#128444; Image</button>
                 <button class="explain-btn" onclick="event.stopPropagation(); openExplainPanel()" title="Get AI explanation"><span class="explain-icon">&#128161;</span> Explain</button>
                 <span class="card-difficulty" id="cardDiffBack"></span>
               </div>
@@ -1871,6 +2100,7 @@
               <span class="quiz-question-label">Question</span>
               <span class="card-topic" id="quizTopic"></span>
             </div>
+            <img class="quiz-card-image hidden" id="quizCardImage" src="" alt="Card image">
             <div class="quiz-question-text" id="quizQuestionText"></div>
             <div style="display:flex; align-items:center; gap:0.75rem; justify-content:center; margin-top:0.5rem;">
               <span class="card-difficulty" id="quizDifficulty" style="position:static; display:inline-block;"></span>
@@ -1973,11 +2203,13 @@
           <div class="card-face card-front">
             <span class="card-label">Question</span>
             <span class="card-topic" id="reviewCardTopic"></span>
+            <img class="card-image hidden" id="reviewCardImageFront" src="" alt="Card image">
             <div class="card-text" id="reviewCardQuestion"></div>
             <span class="card-difficulty" id="reviewCardDiff"></span>
           </div>
           <div class="card-face card-back">
             <span class="card-label">Answer</span>
+            <img class="card-image hidden" id="reviewCardImageBack" src="" alt="Card image">
             <div class="card-text" id="reviewCardAnswer"></div>
           </div>
         </div>
@@ -2063,6 +2295,36 @@
     <div class="modal-actions">
       <button class="quiz-action-btn secondary" onclick="closeModal('renameModal')">Cancel</button>
       <button class="quiz-action-btn primary" onclick="confirmRename()">Rename</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: CARD IMAGE EDITOR ==================== -->
+<div class="modal-overlay" id="cardImageModal">
+  <div class="modal">
+    <h3>Card Image</h3>
+    <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">Add or change the image for this card face.</p>
+    <div class="image-upload-zone" id="cardImageUploadZone">
+      <div class="upload-label" id="cardImageUploadLabel">
+        <span class="upload-icon">&#128444;</span>
+        <span>Drop an image here or click to upload</span>
+        <span class="upload-hint">PNG, JPG, GIF, SVG, or WebP (max 2MB)</span>
+      </div>
+      <input type="file" id="cardImageFileInput" accept="image/*">
+    </div>
+    <div class="image-url-row">
+      <input type="text" id="cardImageUrlInput" placeholder="Or paste an image URL...">
+      <button onclick="loadCardImageFromUrl()">Add</button>
+    </div>
+    <div class="image-preview-row hidden" id="cardImagePreview">
+      <img id="cardImagePreviewImg" src="" alt="Preview">
+      <div class="preview-info" id="cardImagePreviewInfo">Image loaded</div>
+      <button class="preview-remove" onclick="removeCardEditorImage()" title="Remove">&times;</button>
+    </div>
+    <div class="modal-actions">
+      <button class="quiz-action-btn secondary" onclick="closeModal('cardImageModal')">Cancel</button>
+      <button class="quiz-action-btn secondary" onclick="removeCardImage()" style="border-color:var(--error); color:var(--error);">Remove Image</button>
+      <button class="quiz-action-btn primary" onclick="saveCardImage()">Save</button>
     </div>
   </div>
 </div>
@@ -2176,14 +2438,206 @@
     }, { passive: true });
   }
 
+  // ─── Image Upload Handling ───────────────────────────────────────────────
+  let pendingImage = null; // base64 data URL for image to apply to all generated cards
+  let cardImageEditorSide = null; // 'front' or 'back'
+  let cardImageEditorData = null; // temp data URL while editing
+
+  function initImageUpload() {
+    const zone = document.getElementById('imageUploadZone');
+    const fileInput = document.getElementById('imageFileInput');
+
+    zone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', e => {
+      if (e.target.files[0]) processImageFile(e.target.files[0], 'main');
+    });
+
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) processImageFile(file, 'main');
+    });
+
+    // Paste from clipboard
+    document.addEventListener('paste', e => {
+      if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') {
+        if (document.activeElement.id !== 'imageUrlInput' && document.activeElement.id !== 'cardImageUrlInput') return;
+      }
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          e.preventDefault();
+          processImageFile(item.getAsFile(), 'main');
+          break;
+        }
+      }
+    });
+
+    // Card image editor
+    const cardZone = document.getElementById('cardImageUploadZone');
+    const cardFileInput = document.getElementById('cardImageFileInput');
+    cardZone.addEventListener('click', () => cardFileInput.click());
+    cardFileInput.addEventListener('change', e => {
+      if (e.target.files[0]) processImageFile(e.target.files[0], 'card');
+    });
+    cardZone.addEventListener('dragover', e => { e.preventDefault(); cardZone.classList.add('drag-over'); });
+    cardZone.addEventListener('dragleave', () => cardZone.classList.remove('drag-over'));
+    cardZone.addEventListener('drop', e => {
+      e.preventDefault();
+      cardZone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) processImageFile(file, 'card');
+    });
+  }
+
+  function processImageFile(file, target) {
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Image too large. Maximum size is 2MB.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+      const dataUrl = e.target.result;
+      if (target === 'main') {
+        pendingImage = dataUrl;
+        showImagePreview(dataUrl, file.name, 'main');
+      } else {
+        cardImageEditorData = dataUrl;
+        showImagePreview(dataUrl, file.name, 'card');
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function showImagePreview(dataUrl, name, target) {
+    if (target === 'main') {
+      document.getElementById('imagePreview').classList.remove('hidden');
+      document.getElementById('imagePreviewImg').src = dataUrl;
+      document.getElementById('imagePreviewInfo').textContent = name || 'Image loaded';
+    } else {
+      document.getElementById('cardImagePreview').classList.remove('hidden');
+      document.getElementById('cardImagePreviewImg').src = dataUrl;
+      document.getElementById('cardImagePreviewInfo').textContent = name || 'Image loaded';
+    }
+  }
+
+  function removeUploadedImage() {
+    pendingImage = null;
+    document.getElementById('imagePreview').classList.add('hidden');
+    document.getElementById('imagePreviewImg').src = '';
+    document.getElementById('imageFileInput').value = '';
+    document.getElementById('imageUrlInput').value = '';
+  }
+
+  function loadImageFromUrl() {
+    const url = document.getElementById('imageUrlInput').value.trim();
+    if (!url) return;
+    fetchImageAsDataUrl(url, dataUrl => {
+      pendingImage = dataUrl;
+      showImagePreview(dataUrl, url.split('/').pop(), 'main');
+    });
+  }
+
+  function loadCardImageFromUrl() {
+    const url = document.getElementById('cardImageUrlInput').value.trim();
+    if (!url) return;
+    fetchImageAsDataUrl(url, dataUrl => {
+      cardImageEditorData = dataUrl;
+      showImagePreview(dataUrl, url.split('/').pop(), 'card');
+    });
+  }
+
+  function fetchImageAsDataUrl(url, callback) {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      canvas.getContext('2d').drawImage(img, 0, 0);
+      try {
+        callback(canvas.toDataURL('image/png'));
+      } catch (e) {
+        alert('Could not load image. The server may not allow cross-origin access. Try downloading and uploading it instead.');
+      }
+    };
+    img.onerror = () => alert('Failed to load image from URL.');
+    img.src = url;
+  }
+
+  function removeCardEditorImage() {
+    cardImageEditorData = null;
+    document.getElementById('cardImagePreview').classList.add('hidden');
+    document.getElementById('cardImagePreviewImg').src = '';
+    document.getElementById('cardImageFileInput').value = '';
+    document.getElementById('cardImageUrlInput').value = '';
+  }
+
+  // Per-card image editor
+  function openCardImageEditor(side) {
+    cardImageEditorSide = side;
+    const card = cards[currentIndex];
+    if (side === 'front' && card.imageFront) {
+      cardImageEditorData = card.imageFront;
+      showImagePreview(card.imageFront, 'Current image', 'card');
+    } else if (side === 'back' && card.imageBack) {
+      cardImageEditorData = card.imageBack;
+      showImagePreview(card.imageBack, 'Current image', 'card');
+    } else {
+      removeCardEditorImage();
+    }
+    openModal('cardImageModal');
+  }
+
+  function saveCardImage() {
+    const card = cards[currentIndex];
+    if (cardImageEditorSide === 'front') {
+      card.imageFront = cardImageEditorData || null;
+    } else {
+      card.imageBack = cardImageEditorData || null;
+    }
+    showCard(currentIndex);
+    closeModal('cardImageModal');
+  }
+
+  function removeCardImage() {
+    const card = cards[currentIndex];
+    if (cardImageEditorSide === 'front') {
+      card.imageFront = null;
+    } else {
+      card.imageBack = null;
+    }
+    removeCardEditorImage();
+    showCard(currentIndex);
+    closeModal('cardImageModal');
+  }
+
+  // Helper to show/hide card image element
+  function setCardImage(imgEl, src) {
+    if (src) {
+      imgEl.src = src;
+      imgEl.classList.remove('hidden');
+    } else {
+      imgEl.src = '';
+      imgEl.classList.add('hidden');
+    }
+  }
+
   // ─── Cloudflare Worker URL ────────────────────────────────────────────────
   const WORKER_URL = 'https://flashcard-generator.khushiflashcard.workers.dev';
   // ─────────────────────────────────────────────────────────────────────────
 
   // ─── State ───────────────────────────────────────────────────────────────
   let cards = [];
+  let originalCards = []; // unshuffled order backup
   let currentIndex = 0;
   let currentPage = 'generate';
+  let shuffleMode = false;
+  let reverseMode = false;
 
   // Quiz state
   let quizActive = false;
@@ -2255,9 +2709,11 @@ Rules:
     const id = generateId();
     const now = Date.now();
 
-    // Initialize SRS data for each card
+    // Initialize SRS data for each card (including images)
     const srsCards = cards.map(c => ({
       ...c,
+      imageFront: c.imageFront || null,
+      imageBack: c.imageBack || null,
       srs: {
         easeFactor: 2.5,
         interval: 0,
@@ -2319,7 +2775,9 @@ Rules:
       question: c.question,
       answer: c.answer,
       difficulty: c.difficulty,
-      topic: c.topic
+      topic: c.topic,
+      imageFront: c.imageFront || null,
+      imageBack: c.imageBack || null
     }));
 
     decks[id].lastStudied = Date.now();
@@ -2468,6 +2926,10 @@ Rules:
     document.getElementById('reviewCardAnswer').textContent = card.answer;
     document.getElementById('reviewCardTopic').textContent = card.topic;
 
+    // Show review card images
+    setCardImage(document.getElementById('reviewCardImageFront'), card.imageFront);
+    setCardImage(document.getElementById('reviewCardImageBack'), card.imageBack);
+
     const diffClass = 'diff-' + card.difficulty;
     const diffText = card.difficulty.charAt(0).toUpperCase() + card.difficulty.slice(1);
     const diffEl = document.getElementById('reviewCardDiff');
@@ -2543,12 +3005,12 @@ Rules:
     // Compress deck data — only essential fields
     const shareData = {
       n: deck.name,
-      c: deck.cards.map(c => ({
-        q: c.question,
-        a: c.answer,
-        d: c.difficulty,
-        t: c.topic
-      }))
+      c: deck.cards.map(c => {
+        const entry = { q: c.question, a: c.answer, d: c.difficulty, t: c.topic };
+        if (c.imageFront) entry.if = c.imageFront;
+        if (c.imageBack) entry.ib = c.imageBack;
+        return entry;
+      })
     };
 
     const json = JSON.stringify(shareData);
@@ -2633,7 +3095,9 @@ Rules:
         question: c.q,
         answer: c.a,
         difficulty: c.d || 'medium',
-        topic: c.t || 'General'
+        topic: c.t || 'General',
+        imageFront: c.if || null,
+        imageBack: c.ib || null
       }));
 
       if (importedCards.length === 0) return;
@@ -2715,6 +3179,8 @@ Rules:
             answer: c.answer || c.a,
             difficulty: c.difficulty || c.d || 'medium',
             topic: c.topic || c.t || 'General',
+            imageFront: c.imageFront || null,
+            imageBack: c.imageBack || null,
             srs: c.srs || {
               easeFactor: 2.5,
               interval: 0,
@@ -3077,6 +3543,11 @@ Rules:
           throw new Error('API returned invalid flashcard data.');
         }
 
+        // Apply pending image to all generated cards
+        if (pendingImage) {
+          cards.forEach(c => { c.imageFront = pendingImage; });
+        }
+
         hideStatus();
         displayCards();
       } catch (err) {
@@ -3094,6 +3565,11 @@ Rules:
 
         if (cards.length === 0) {
           throw new Error('Could not extract enough content. Please paste more text (at least a few paragraphs).');
+        }
+
+        // Apply pending image to all generated cards
+        if (pendingImage) {
+          cards.forEach(c => { c.imageFront = pendingImage; });
         }
 
         hideStatus();
@@ -3245,8 +3721,46 @@ Rules:
   }
 
   // ─── Display & Navigation ────────────────────────────────────────────────
+  // ─── Shuffle & Reverse Mode ─────────────────────────────────────────────
+  function toggleShuffle() {
+    shuffleMode = !shuffleMode;
+    document.getElementById('shuffleBtn').classList.toggle('active', shuffleMode);
+
+    if (shuffleMode) {
+      // Save original order if not already saved
+      if (originalCards.length === 0) originalCards = [...cards];
+      // Fisher-Yates shuffle
+      const shuffled = [...cards];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      cards = shuffled;
+    } else {
+      // Restore original order
+      if (originalCards.length > 0) cards = [...originalCards];
+    }
+
+    currentIndex = 0;
+    renderDots();
+    showCard(0);
+  }
+
+  function toggleReverse() {
+    reverseMode = !reverseMode;
+    document.getElementById('reverseBtn').classList.toggle('active', reverseMode);
+    // Re-render current card with reversed content
+    showCard(currentIndex);
+  }
+
   function displayCards() {
     currentIndex = 0;
+    originalCards = [...cards]; // save original order
+    // Reset shuffle/reverse state for new deck
+    shuffleMode = false;
+    reverseMode = false;
+    document.getElementById('shuffleBtn').classList.remove('active');
+    document.getElementById('reverseBtn').classList.remove('active');
     document.getElementById('results').classList.remove('hidden');
     renderDots();
     showCard(0);
@@ -3259,9 +3773,25 @@ Rules:
     const flashcard = document.getElementById('flashcard');
     flashcard.classList.remove('flipped');
 
-    document.getElementById('cardQuestion').textContent = card.question;
-    document.getElementById('cardAnswer').textContent = card.answer;
+    // Reverse mode swaps question and answer
+    const frontText = reverseMode ? card.answer : card.question;
+    const backText = reverseMode ? card.question : card.answer;
+    const frontLabel = reverseMode ? 'Answer' : 'Question';
+    const backLabel = reverseMode ? 'Question' : 'Answer';
+    const frontImage = reverseMode ? card.imageBack : card.imageFront;
+    const backImage = reverseMode ? card.imageFront : card.imageBack;
+
+    document.getElementById('cardQuestion').textContent = frontText;
+    document.getElementById('cardAnswer').textContent = backText;
     document.getElementById('cardTopic').textContent = card.topic;
+
+    // Update labels for reverse mode
+    document.querySelector('#flashcard .card-front .card-label').textContent = frontLabel;
+    document.querySelector('#flashcard .card-back .card-label').textContent = backLabel;
+
+    // Show card images
+    setCardImage(document.getElementById('cardImageFront'), frontImage);
+    setCardImage(document.getElementById('cardImageBack'), backImage);
 
     const diffClass = 'diff-' + card.difficulty;
     const diffText = card.difficulty.charAt(0).toUpperCase() + card.difficulty.slice(1);
@@ -3355,6 +3885,9 @@ Rules:
 
     document.getElementById('quizQuestionText').textContent = card.question;
     document.getElementById('quizTopic').textContent = card.topic;
+
+    // Show quiz card image
+    setCardImage(document.getElementById('quizCardImage'), card.imageFront);
 
     const diffClass = 'diff-' + card.difficulty;
     const diffText = card.difficulty.charAt(0).toUpperCase() + card.difficulty.slice(1);
@@ -3712,7 +4245,8 @@ Rules:
         const topicH = 5;
         const qH = qLines.length * 5;
         const aH = aLines.length * 4.5;
-        const cardH = Math.max(padY + topicH + 3 + qH + 4 + aH + padY, 25);
+        const imgH = card.imageFront ? 28 : 0;
+        const cardH = Math.max(padY + topicH + 3 + qH + 4 + imgH + aH + padY, 25);
 
         if (y + cardH > pageH - mB) { doc.addPage(); y = mT; }
 
@@ -3755,6 +4289,14 @@ Rules:
         doc.setTextColor(...dark);
         doc.text(qLines, ix, iy + 4);
         iy += qH + 4;
+
+        // Card image (if present)
+        if (card.imageFront) {
+          try {
+            doc.addImage(card.imageFront, 'PNG', ix, iy, 40, 25, undefined, 'FAST');
+            iy += 28;
+          } catch(e) { /* skip if image fails */ }
+        }
 
         // Answer
         doc.setFont('helvetica', 'normal');
@@ -4043,6 +4585,9 @@ Rules:
 
   // ─── Init Shortcut Bar ──────────────────────────────────────────────────
   initShortcutBar();
+
+  // ─── Init Image Upload ─────────────────────────────────────────────────
+  initImageUpload();
 
   // ─── Init Swipe Gestures ────────────────────────────────────────────────
   initSwipeGestures('#studyMode .card-viewport', nextCard, prevCard);
